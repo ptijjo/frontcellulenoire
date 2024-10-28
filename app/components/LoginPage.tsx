@@ -39,7 +39,7 @@ const LoginPage = () => {
 
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-1.5 w-4/5">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-1.5 w-4/5 m-auto">
             <Input type="text" placeholder="e-mail or pseudo" id="identifiant" autoComplete="false" className="rounded-none placeholder-red-400 pl-4" {...register("identifiant")} />
             {errors.identifiant && errors.identifiant.type === "required" && <span>Identifiant Obligatoire</span>}
 

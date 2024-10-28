@@ -2,14 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-*{
-  min-width: 0;
-  font: inherit;
-  text-decoration: none;
-  list-style:none;
-  margin:0 auto;
-  padding: 0;
-}
 
 body {
   min-height: 100dvh;
@@ -21,7 +13,12 @@ body {
 }
 
 *,*::before,*::after{
+  min-width: 0;
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  text-decoration: none;
+  list-style: none;
 }
 
 a:visited{
