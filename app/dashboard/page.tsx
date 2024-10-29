@@ -35,6 +35,7 @@ const Dashboard = () => {
             {books?.map((book) => (
                 <div key={book.id}>
                     <p>{book.title}</p>
+                    <p><img src={book?.url} alt="" /></p>
                 </div>
             ))}
         </main>
