@@ -3,7 +3,8 @@ const Url = {
     decodage: "http://localhost:8080/users_decodage",
     userById: "http://localhost:8080/users/",
     getBooks: "http://localhost:8080/books",
-    addBooks:"http://localhost:8080/books"
+    addBooks: "http://localhost:8080/books",
+    getCategory:"http://localhost:8080/categories"
 }
 
 export default Url;

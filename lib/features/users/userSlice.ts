@@ -69,4 +69,4 @@ export const selectUser = (state: any) => state.user.user;
 export const selectUserStatus = (state: any) => state.user.status;
 
 
-export default userSlice.reducer
+export default userSlice.reducer;

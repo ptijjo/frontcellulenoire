@@ -36,7 +36,7 @@ const FormBook = () => {
             formData.append("categoryName", data.categoryName);
 
             const response = await axios.post(Url.addBooks, formData);
-            console.log(response.data);
+            navigate.push("/dashboard");
         } catch (error: any) {
             const message = error.response?.data?.message || "Une erreur s'est produite";
             toast.error(message);
