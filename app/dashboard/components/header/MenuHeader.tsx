@@ -10,15 +10,17 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Dispatch } from '@/lib/hooks';
 import { logout } from '@/lib/features/users/userSlice';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 
 interface HeaderProps {
     pseudo: string;
     id: string;
     avatar: string;
+    role: string;
 }
 
-const MenuHeader: React.FC<HeaderProps> = ({ pseudo, id, avatar }) => {
+const MenuHeader: React.FC<HeaderProps> = ({ pseudo, id, avatar,role }) => {
     const dispatch = Dispatch();
     const router = useRouter();
 
@@ -45,6 +47,10 @@ const MenuHeader: React.FC<HeaderProps> = ({ pseudo, id, avatar }) => {
                 <MenubarContent className="border-none">
                     <MenubarItem className=" flex flex-col justify-center items-center w-1/2 relative left-12">
                         <button className='bg-slate-600 rounded px-2.5' onClick={() => HandleProfil(id)}>Profil</button>
+                    </MenubarItem>
+                    <MenubarItem className=" flex flex-col justify-center items-center w-1/2 relative left-12">
+                        <Link href="/dashboard/ajout" className={(role !== "user" ? "bg-slate-600 rounded px-2.5" : "hidden")}><p>ajout de livre</p></Link>
+
                     </MenubarItem>
                     <MenubarItem className=" flex flex-col justify-center items-center w-1/2 relative left-12">
                         <button className='bg-slate-600 rounded px-2.5' onClick={HandleDeconnection}>Déconnection</button>

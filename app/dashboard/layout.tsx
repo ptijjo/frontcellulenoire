@@ -14,8 +14,8 @@ const layout = ({ children }: { children: React.ReactNode }) => {
     const [token, setToken] = useState<string | null>(null);
     const user = Selector(selectUser);
 
+    //Vérification de l'existance d'un token pour vérifier qui est connecté et si pas de token on retourne a la page de connection
     useEffect(() => {
-
         if (typeof window !== "undefined") {
             const storedToken = localStorage.getItem("token");
             setToken(storedToken);
@@ -25,7 +25,6 @@ const layout = ({ children }: { children: React.ReactNode }) => {
             else {
                 router.push("/");
             }
-
         }
     }, [token]);
 

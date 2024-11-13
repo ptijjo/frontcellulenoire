@@ -19,8 +19,7 @@ const Header: React.FC<HeaderProps> = ({ pseudo, id, avatar, role }) => {
                 </div >
             </Link>
             <div className='flex items-center gap-3.5'>
-                <Link href="/dashboard/ajout" className={(role !== "user" ? "" : "hidden")}><p>ajout de livre</p></Link>
-                <MenuHeader pseudo={pseudo} id={id} avatar={avatar} />
+                <MenuHeader pseudo={pseudo} id={id} avatar={avatar} role={role} />
             </div>
         </header >
     )

@@ -63,7 +63,7 @@ const FormBook = () => {
             </select>
             {errors.categoryName && errors.categoryName.type === "required" && <span>Categorie  obligatoire</span>}
 
-            <Button type="submit" className="mt-2.5 bg-blue-400">Se connecter</Button>
+            <Button type="submit" className="mt-2.5 bg-blue-400">Ajouter</Button>
 
             <ToastContainer autoClose={2000} />
         </form>
