@@ -30,6 +30,17 @@ const ConvertisseurID: React.FC<idCategory> = ({ id, token }) => {
             {nom}
         </>
     )
+};
+
+export const fonctionConvertisseur = async (id: string, token: string): Promise<string> => {
+    const catgeorie = await axios.get(`${Url.getCategory}/${id}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return catgeorie.data.data.type;
 }
+
 
 export default ConvertisseurID

@@ -45,16 +45,23 @@ const MenuHeader: React.FC<HeaderProps> = ({ pseudo, id, avatar,role }) => {
                     <p>{pseudo}</p>
                 </MenubarTrigger>
                 <MenubarContent className="border-none">
+
                     <MenubarItem className=" flex flex-col justify-center items-center w-1/2 relative left-12">
                         <button className='bg-slate-600 rounded px-2.5' onClick={() => HandleProfil(id)}>Profil</button>
                     </MenubarItem>
+
+                    <MenubarItem className=" flex flex-col justify-center items-center w-1/2 relative left-12">
+                        <Link href="" className={(role !== "user" ? "bg-slate-600 rounded px-2.5" : "hidden")}><p>Invitation</p></Link>
+                    </MenubarItem>
+
                     <MenubarItem className=" flex flex-col justify-center items-center w-1/2 relative left-12">
                         <Link href="/dashboard/ajout" className={(role !== "user" ? "bg-slate-600 rounded px-2.5" : "hidden")}><p>ajout de livre</p></Link>
-
                     </MenubarItem>
+
                     <MenubarItem className=" flex flex-col justify-center items-center w-1/2 relative left-12">
                         <button className='bg-slate-600 rounded px-2.5' onClick={HandleDeconnection}>Déconnection</button>
                     </MenubarItem>
+
                 </MenubarContent>
             </MenubarMenu>
         </Menubar>

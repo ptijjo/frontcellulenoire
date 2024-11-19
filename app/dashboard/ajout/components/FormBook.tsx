@@ -5,15 +5,16 @@ import { Label } from '@/components/ui/label'
 import Url from '@/lib/Url'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { toast, ToastContainer } from 'react-toastify'
 
 
 type Inputs = {
-    title: string
-    url: string
-    categoryName: string
+    title: string;
+    url: string;
+    categoryName: string;
+    author: string;
 }
 const FormBook = () => {
     const navigate = useRouter();
@@ -23,6 +24,15 @@ const FormBook = () => {
         watch,
         formState: { errors },
     } = useForm<Inputs>();
+
+    const [token, setToken] = useState<string | null>(null);
+    //Vérification du token pour vérifier l'autorisation d'afficher les livres
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const storedToken = localStorage.getItem("token");
+            setToken(storedToken);
+        };
+    }, [token]);
 
 
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
@@ -35,7 +45,13 @@ const FormBook = () => {
             };
             formData.append("categoryName", data.categoryName);
 
-            const response = await axios.post(Url.addBooks, formData);
+            formData.append("author", data.author);
+
+            const response = await axios.post(Url.addBooks, formData, {
+                headers: {
+                    Authorization: `Bearer ${token as string}`
+                }
+            });
             navigate.push("/dashboard");
         } catch (error: any) {
             const message = error.response?.data?.message || "Une erreur s'est produite";
@@ -49,6 +65,10 @@ const FormBook = () => {
             <Label htmlFor='titre'>Tite du livre</Label>
             <Input type="text" placeholder="titre de l'ouvrage" id="titre" autoComplete="false" className="rounded-none placeholder-red-400 pl-4" {...register("title", { required: true })} />
             {errors.title && errors.title.type === "required" && <span>Title Obligatoire</span>}
+
+            <Label htmlFor='author'>Auteur du livre</Label>
+            <Input type="text" placeholder="auteur de l'ouvrage" id="titre" autoComplete="false" className="rounded-none placeholder-red-400 pl-4" {...register("author", { required: true })} />
+            {errors.author && errors.author.type === "required" && <span>Auteur Obligatoire</span>}
 
             <Input type="file" id="url" autoComplete="false" className="rounded-none" {...register("url", { required: true })} accept='application/pdf' />
             {errors.url && errors.url.type === "required" && <span>Fichier  obligatoire</span>}

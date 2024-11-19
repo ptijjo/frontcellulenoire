@@ -5,6 +5,7 @@ import Footer from './components/footer/Footer';
 import { login, selectUser, selectUserStatus } from '@/lib/features/users/userSlice';
 import { Dispatch, Selector } from '@/lib/hooks';
 import { useRouter } from 'next/navigation';
+import { getBooks} from '@/lib/features/books/bookSlice';
 
 
 const layout = ({ children }: { children: React.ReactNode }) => {
@@ -26,7 +27,7 @@ const layout = ({ children }: { children: React.ReactNode }) => {
                 router.push("/");
             }
         }
-    }, [token]);
+    }, [token, dispatch, login, getBooks]);
 
 
     return (
