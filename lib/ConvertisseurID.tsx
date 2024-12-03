@@ -14,7 +14,7 @@ const ConvertisseurID: React.FC<idCategory> = ({ id, token }) => {
 
     useEffect(() => {
 
-        axios.get(`${Url.getCategory}/${id}`, {
+        if (token) axios.get(`${Url.getCategory}/${id}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

@@ -1,3 +1,4 @@
+"use client"
 import React from 'react';
 import {
     Menubar,
@@ -11,6 +12,7 @@ import { Dispatch } from '@/lib/hooks';
 import { logout } from '@/lib/features/users/userSlice';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { FaShield } from "react-icons/fa6";
 
 
 interface HeaderProps {
@@ -20,7 +22,7 @@ interface HeaderProps {
     role: string;
 }
 
-const MenuHeader: React.FC<HeaderProps> = ({ pseudo, id, avatar,role }) => {
+const MenuHeader: React.FC<HeaderProps> = ({ pseudo, id, avatar, role }) => {
     const dispatch = Dispatch();
     const router = useRouter();
 
@@ -30,36 +32,43 @@ const MenuHeader: React.FC<HeaderProps> = ({ pseudo, id, avatar,role }) => {
 
     };
 
+
     const HandleProfil = (id: string) => {
         router.push(`/dashboard/profil/${id}`)
     }
 
     return (
-        <Menubar className="border-none text-black -mx-3">
+        <Menubar className="border-none text-black -mx-3 shadow-none">
             <MenubarMenu>
-                <MenubarTrigger className="text-lg gap-3" value="bouton_menu" tabIndex={-1} aria-label="bouton_menu" id="bouton_menu" title="bouton_menu">
+                <MenubarTrigger className="text-lg gap-3 relative" value="bouton_menu" tabIndex={-1} aria-label="bouton_menu" id="bouton_menu" title="bouton_menu">
                     <Avatar className="cursor-pointer">
-                        <AvatarImage src={avatar} alt="image de profil" />
+                        <AvatarImage src={avatar} alt="image de profil" className='' />
                         <AvatarFallback>avatar</AvatarFallback>
                     </Avatar>
                     <p>{pseudo}</p>
+                    {(role === "admin") && <FaShield className='absolute bottom-0 left-[35%] text-red-700' />}
+                    {(role === "modo") && <FaShield className='absolute bottom-0 left-[35%] text-blue-700' />}
                 </MenubarTrigger>
                 <MenubarContent className="border-none">
 
                     <MenubarItem className=" flex flex-col justify-center items-center w-1/2 relative left-12">
-                        <button className='bg-slate-600 rounded px-2.5' onClick={() => HandleProfil(id)}>Profil</button>
+                        <button className='bg-slate-600 rounded px-2.5 text-white' onClick={() => HandleProfil(id)}>Profil</button>
+                    </MenubarItem>
+
+                    <MenubarItem className={(role !== "user" ? "flex flex-col justify-center items-center w-1/2 relative left-12" : "hidden")}>
+                        <Link href="/dashboard/invitation" className="bg-slate-600 rounded px-2.5 text-white"><p className='text-white'>Invitation</p></Link>
+                    </MenubarItem>
+
+                    <MenubarItem className={(role !== "user" ? "flex flex-col justify-center items-center w-1/2 relative left-12" : "hidden")}>
+                        <Link href="/dashboard/users" className="bg-slate-600 rounded px-2.5 text-white"><p className='text-white'>Utilisateurs</p></Link>
+                    </MenubarItem>
+
+                    <MenubarItem className={(role !== "user" ? "flex flex-col justify-center items-center w-1/2 relative left-12 " : "hidden")}>
+                        <Link href="/dashboard/ajout" className="bg-slate-600 rounded px-2.5 "><p className='text-white'>ajout de livre</p></Link>
                     </MenubarItem>
 
                     <MenubarItem className=" flex flex-col justify-center items-center w-1/2 relative left-12">
-                        <Link href="" className={(role !== "user" ? "bg-slate-600 rounded px-2.5" : "hidden")}><p>Invitation</p></Link>
-                    </MenubarItem>
-
-                    <MenubarItem className=" flex flex-col justify-center items-center w-1/2 relative left-12">
-                        <Link href="/dashboard/ajout" className={(role !== "user" ? "bg-slate-600 rounded px-2.5" : "hidden")}><p>ajout de livre</p></Link>
-                    </MenubarItem>
-
-                    <MenubarItem className=" flex flex-col justify-center items-center w-1/2 relative left-12">
-                        <button className='bg-slate-600 rounded px-2.5' onClick={HandleDeconnection}>Déconnection</button>
+                        <button className='bg-slate-600 rounded px-2.5 text-white' onClick={HandleDeconnection}>Déconnection</button>
                     </MenubarItem>
 
                 </MenubarContent>

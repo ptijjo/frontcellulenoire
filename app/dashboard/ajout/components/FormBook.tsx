@@ -47,7 +47,7 @@ const FormBook = () => {
 
             formData.append("author", data.author);
 
-            const response = await axios.post(Url.addBooks, formData, {
+            await axios.post(Url.addBooks, formData, {
                 headers: {
                     Authorization: `Bearer ${token as string}`
                 }
@@ -63,14 +63,14 @@ const FormBook = () => {
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-1.5 w-4/5 m-auto">
             <Label htmlFor='titre'>Tite du livre</Label>
-            <Input type="text" placeholder="titre de l'ouvrage" id="titre" autoComplete="false" className="rounded-none placeholder-red-400 pl-4" {...register("title", { required: true })} />
+            <Input type="text" placeholder="titre de l'ouvrage" id="titre" autoComplete="false" className="rounded-none placeholder-red-400 pl-4" {...register("title", { required: true })}  aria-label="Title"/>
             {errors.title && errors.title.type === "required" && <span>Title Obligatoire</span>}
 
             <Label htmlFor='author'>Auteur du livre</Label>
-            <Input type="text" placeholder="auteur de l'ouvrage" id="titre" autoComplete="false" className="rounded-none placeholder-red-400 pl-4" {...register("author", { required: true })} />
+            <Input type="text" placeholder="auteur de l'ouvrage" id="titre" autoComplete="false" className="rounded-none placeholder-red-400 pl-4" {...register("author", { required: true })}  aria-label="Author"/>
             {errors.author && errors.author.type === "required" && <span>Auteur Obligatoire</span>}
 
-            <Input type="file" id="url" autoComplete="false" className="rounded-none" {...register("url", { required: true })} accept='application/pdf' />
+            <Input type="file" id="url" autoComplete="false" className="rounded-none" {...register("url", { required: true })} accept='application/pdf'  aria-label="File"/>
             {errors.url && errors.url.type === "required" && <span>Fichier  obligatoire</span>}
 
             <Label htmlFor='categoryName'>Choisir le genre : </Label>
@@ -83,7 +83,7 @@ const FormBook = () => {
             </select>
             {errors.categoryName && errors.categoryName.type === "required" && <span>Categorie  obligatoire</span>}
 
-            <Button type="submit" className="mt-2.5 bg-blue-400">Ajouter</Button>
+            <Button type="submit" className="mt-2.5 bg-blue-400 text-black">Ajouter</Button>
 
             <ToastContainer autoClose={2000} />
         </form>

@@ -3,9 +3,9 @@ import FormBook from './components/FormBook'
 
 const AjoutBook = () => {
     return (
-        <div>
+        <>
             <FormBook />
-        </div>
+        </>
     )
 }
 

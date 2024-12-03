@@ -5,7 +5,7 @@ import Footer from './components/footer/Footer';
 import { login, selectUser, selectUserStatus } from '@/lib/features/users/userSlice';
 import { Dispatch, Selector } from '@/lib/hooks';
 import { useRouter } from 'next/navigation';
-import { getBooks} from '@/lib/features/books/bookSlice';
+import { getBooks } from '@/lib/features/books/bookSlice';
 
 
 const layout = ({ children }: { children: React.ReactNode }) => {
@@ -33,7 +33,9 @@ const layout = ({ children }: { children: React.ReactNode }) => {
     return (
         <div className='w-full flex flex-col items-center'>
             <Header pseudo={user?.pseudo} id={user?.id} avatar={user?.avatar} role={user?.role} />
-            {children}
+            <main className='flex flex-col w-full items-center gap-3.5 min-h-dvh'>
+                {children}
+            </main>
             <Footer />
         </div>
     )

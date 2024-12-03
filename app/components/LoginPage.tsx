@@ -40,13 +40,13 @@ const LoginPage = () => {
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-1.5 w-4/5 m-auto">
-            <Input type="text" placeholder="e-mail or pseudo" id="identifiant" autoComplete="false" className="rounded-none placeholder-red-400 pl-4" {...register("identifiant")} />
-            {errors.identifiant && errors.identifiant.type === "required" && <span>Identifiant Obligatoire</span>}
+            <Input type="text" placeholder="e-mail or pseudo" id="identifiant" autoComplete="off" className="rounded-none placeholder-red-400 pl-4" {...register("identifiant", { required: true })} />
+            {errors.identifiant && errors.identifiant.type === "required" && <span className="text-center text-red-700">Identifiant Obligatoire ! </span>}
 
             <Input type="password" placeholder="password" id="password" autoComplete="false" className="rounded-none" {...register("password", { required: true })} />
-            {errors.password && errors.password.type === "required" && <span>Mot de passe obligatoire</span>}
+            {errors.password && errors.password.type === "required" && <span className="text-center text-red-700">Mot de passe obligatoire !</span>}
 
-            <Button type="submit" className="mt-2.5 bg-blue-400">Se connecter</Button>
+            <Button type="submit" className="mt-2.5 bg-blue-400 text-black">Se connecter</Button>
 
             <ToastContainer autoClose={2000} />
         </form>

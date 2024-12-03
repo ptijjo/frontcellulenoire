@@ -22,7 +22,7 @@ export default function Home() {
           </Card>
         </div>
       </div>
-      <footer className="flex flex-wrap gap-x-1.5 text-xs mt-3.5 items-center justify-center">
+      <footer className="flex flex-wrap gap-5 lg:gap-x-3.5 text-xs mt-3.5 items-center justify-center">
         <Link href="#">Meta</Link>
         <Link href="#">A propos</Link>
         <Link href="#">Blog</Link>

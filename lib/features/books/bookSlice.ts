@@ -1,14 +1,15 @@
 import Url from '@/lib/Url';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { Book } from '../../Interface/book.interface';
 
-interface Book {
-    id: string;
-    title: string;
-    url: string;
-    categoryId: string;
-    uploadedAt: Date;
-};
+// interface Book {
+//     id: string;
+//     title: string;
+//     url: string;
+//     categoryId: string;
+//     uploadedAt: Date;
+// };
 
 interface bookState {
     book: Book[] | [];
@@ -27,7 +28,7 @@ export const getBooks = createAsyncThunk < any, { token: string; search: string;
         headers: {
             Authorization: `Bearer ${token}`
         },
-        params:{search,filtre,page,limit:itemPerPage}
+        params:{search,filtre,page,itemPerPage}
     });
     return response.data;
 });
@@ -47,18 +48,22 @@ export const bookSlice = createSlice({
     reducers: {},
     extraReducers: builder => {
         builder
+            // Récupération des livres
             .addCase(getBooks.pending, (state) => {
                 state.status = "loading";
             })
         
             .addCase(getBooks.fulfilled, (state, action) => {
                 state.status = "success";
-                state.book = action.payload;
+                  // Vérifie si l'API retourne directement un tableau ou un objet contenant `data`
+                state.book = Array.isArray(action.payload.data) && action.payload.data ;
+    
             })
             .addCase(getBooks.rejected, (state, action) => {
                 state.status = "failed";
-                state.error = action.error.message as string;
+                state.error = action.error.message as string || "Failed to fech books";
             })
+            
 
             .addCase(deleteBook.pending, (state) => {
                 state.status = "loading";
@@ -66,7 +71,10 @@ export const bookSlice = createSlice({
         
             .addCase(deleteBook.fulfilled, (state, action) => {
                 state.status = "success";
-                state.book = action.payload;
+                 // Filtrer le livre supprimé par son ID
+                if (Array.isArray(state.book)) {
+                state.book = state.book.filter((book) => book.id !== action.payload.id);
+          }
             })
             .addCase(deleteBook.rejected, (state, action) => {
                 state.status = "failed";
@@ -75,7 +83,7 @@ export const bookSlice = createSlice({
     },
 });
 
-export const selectBook = (state: any) => state.book.book.data;
+export const selectBook = (state: any) => state.book.book;
 export const selectBokkStatus = (state: any) => state.book.status;
 
 export default bookSlice.reducer;

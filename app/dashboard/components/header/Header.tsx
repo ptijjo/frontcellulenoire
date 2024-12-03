@@ -3,6 +3,8 @@ import MenuHeader from './MenuHeader';
 import Image from 'next/image';
 import Link from 'next/link';
 
+
+
 interface HeaderProps {
     pseudo: string;
     id: string;
