@@ -61,8 +61,6 @@ const Users = () => {
 
     }
 
-    console.log(users)
-
     return (
         <>
             {/* Affichagede la barre de recherche */}
@@ -101,10 +99,10 @@ const Users = () => {
             </div>
 
             {/* Pagination */}
-            <div className={(users.length !== 0) ? 'flex gap-3.5' : "hidden"}>
+            <div className={(users.length !== 0) ? 'flex gap-3.5 mt-32' : "hidden"}>
                 <p onClick={handleBefore} className={(page === 1) ? "hidden" : 'cursor-pointer'}>Precedent</p>
                 <p>---</p>
-                <p onClick={handleNext} className={(page == users.length) ? 'cursor-pointer' : "hidden"} >Suivant</p>
+                <p onClick={handleNext} className={(users.length==itemPerPage) ? 'cursor-pointer' : "hidden"} >Suivant</p>
             </div>
         </ >
     )
