@@ -62,19 +62,19 @@ const FormBook = () => {
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-1.5 w-4/5 m-auto">
-            <Label htmlFor='titre'>Tite du livre</Label>
-            <Input type="text" placeholder="titre de l'ouvrage" id="titre" autoComplete="false" className="rounded-none placeholder-red-400 pl-4" {...register("title", { required: true })}  aria-label="Title"/>
+            <Label htmlFor='titre' className='text-center'>Tite du livre</Label>
+            <Input type="text" placeholder="titre de l'ouvrage" id="titre" autoComplete="false" className="rounded-none placeholder-red-400 pl-4 mb-3.5" {...register("title", { required: true })}  aria-label="Title"/>
             {errors.title && errors.title.type === "required" && <span>Title Obligatoire</span>}
 
-            <Label htmlFor='author'>Auteur du livre</Label>
-            <Input type="text" placeholder="auteur de l'ouvrage" id="titre" autoComplete="false" className="rounded-none placeholder-red-400 pl-4" {...register("author", { required: true })}  aria-label="Author"/>
+            <Label htmlFor='author'  className='text-center'>Auteur du livre</Label>
+            <Input type="text" placeholder="auteur de l'ouvrage" id="titre" autoComplete="false" className="rounded-none placeholder-red-400 pl-4 mb-3.5" {...register("author", { required: true })}  aria-label="Author"/>
             {errors.author && errors.author.type === "required" && <span>Auteur Obligatoire</span>}
 
             <Input type="file" id="url" autoComplete="false" className="rounded-none" {...register("url", { required: true })} accept='application/pdf'  aria-label="File"/>
             {errors.url && errors.url.type === "required" && <span>Fichier  obligatoire</span>}
 
-            <Label htmlFor='categoryName'>Choisir le genre : </Label>
-            <select id='categoryName' {...register("categoryName", { required: true })}>
+            <Label htmlFor='categoryName' className='flex justify-center mt-3.5'>Choisir le genre : </Label>
+            <select id='categoryName' {...register("categoryName", { required: true })} className='w-[40%] mx-auto mb-3.5'>
                 <option value="">--Choisir une catégorie--</option>
                 <option value="histoire">Histoire</option>
                 <option value="religion">Religion</option>
@@ -83,7 +83,7 @@ const FormBook = () => {
             </select>
             {errors.categoryName && errors.categoryName.type === "required" && <span>Categorie  obligatoire</span>}
 
-            <Button type="submit" className="mt-2.5 bg-blue-400 text-black">Ajouter</Button>
+            <Button type="submit" className="mt-3.5 bg-blue-500 hover:bg-blue-400 w-[40%] mx-auto">Ajouter</Button>
 
             <ToastContainer autoClose={2000} />
         </form>

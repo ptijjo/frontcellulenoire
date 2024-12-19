@@ -54,8 +54,8 @@ const Invitation = () => {
 
 
                 <div className='flex items-center justify-center mt-2.5 gap-3.5'>
-                    <Button type='button' onClick={() => navigate.back()}> Annuler</Button>
-                    <Button type="submit" className="bg-blue-400 text-black">Inviter</Button>
+                    <Button type='button' onClick={() => navigate.back()} className='bg-red-500 hover:bg-red-400'> Annuler</Button>
+                    <Button type="submit" className="bg-blue-500 hover:bg-blue-400">Inviter</Button>
                 </div>
 
             </form>

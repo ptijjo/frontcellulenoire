@@ -75,8 +75,8 @@ const DeleteBook = ({ params }: { params: { id: string } }) => {
       </Card >
 
       <div className='flex flex-row items-center justify-center gap-3.5'>
-        <Button type="button" onClick={handleCancel}>Annuler</Button>
-        <Button type="button" onClick={handleConfirm}>Confirmer</Button>
+        <Button type="button" onClick={handleCancel} className='bg-red-500 hover:bg-red-400'>Annuler</Button>
+        <Button type="button" onClick={handleConfirm} className='bg-blue-500 hover:bg-blue-400'>Confirmer</Button>
       </div>
 
 

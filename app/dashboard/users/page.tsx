@@ -65,7 +65,7 @@ const Users = () => {
         <>
             {/* Affichagede la barre de recherche */}
             <div className='flex flex-row items-center justify-center w-[80%] lg:w-[60%]'>
-                <Input type='search' className='w-[80%] lg:w-[60%] rounded' value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Search" />
+                <Input type='search' placeholder="Recherche utilisateur" className='w-[80%] lg:w-[60%] rounded' value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Search" />
             </div>
 
             {(users?.length === 0) && <div className='mt-[20px]'>Aucun utilisateur ! </div>}

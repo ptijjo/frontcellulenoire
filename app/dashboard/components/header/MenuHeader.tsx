@@ -52,23 +52,23 @@ const MenuHeader: React.FC<HeaderProps> = ({ pseudo, id, avatar, role }) => {
                 <MenubarContent className="border-none">
 
                     <MenubarItem className=" flex flex-col justify-center items-center w-1/2 relative left-12">
-                        <button className='bg-slate-600 rounded px-2.5 text-white' onClick={() => HandleProfil(id)}>Profil</button>
+                        <button className='hover:bg-blue-500 rounded px-2.5 text-black' onClick={() => HandleProfil(id)}>Profil</button>
                     </MenubarItem>
 
                     <MenubarItem className={(role !== "user" ? "flex flex-col justify-center items-center w-1/2 relative left-12" : "hidden")}>
-                        <Link href="/dashboard/invitation" className="bg-slate-600 rounded px-2.5 text-white"><p className='text-white'>Invitation</p></Link>
+                        <Link href="/dashboard/invitation" className="hover:bg-blue-500 rounded px-2.5 text-black"><p className='text-black'>Invitation</p></Link>
                     </MenubarItem>
 
                     <MenubarItem className={(role !== "user" ? "flex flex-col justify-center items-center w-1/2 relative left-12" : "hidden")}>
-                        <Link href="/dashboard/users" className="bg-slate-600 rounded px-2.5 text-white"><p className='text-white'>Utilisateurs</p></Link>
+                        <Link href="/dashboard/users" className="hover:bg-blue-500 rounded px-2.5 text-black"><p className='text-black'>Utilisateurs</p></Link>
                     </MenubarItem>
 
                     <MenubarItem className={(role !== "user" ? "flex flex-col justify-center items-center w-1/2 relative left-12 " : "hidden")}>
-                        <Link href="/dashboard/ajout" className="bg-slate-600 rounded px-2.5 "><p className='text-white'>ajout de livre</p></Link>
+                        <Link href="/dashboard/ajout" className="hover:bg-blue-500 rounded px-2.5 "><p className='text-black'>ajout de livre</p></Link>
                     </MenubarItem>
 
                     <MenubarItem className=" flex flex-col justify-center items-center w-1/2 relative left-12">
-                        <button className='bg-slate-600 rounded px-2.5 text-white' onClick={HandleDeconnection}>Déconnection</button>
+                        <button className='hover:bg-blue-500 rounded px-2.5 text-black' onClick={HandleDeconnection}>Déconnection</button>
                     </MenubarItem>
 
                 </MenubarContent>

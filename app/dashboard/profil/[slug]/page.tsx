@@ -84,13 +84,13 @@ const Profil = ({ params }: { params: { slug: string } }) => {
                 <Label className='text-center'>Pseudo</Label>
                 <Input type='text' value={pseudo} onChange={(e) => setPseudo(e.target.value)} />
                 <p className={(statusUser === "failed") ? 'text-red-700' : "hidden"}>Pseudo déja existant !!</p>
-                <Button onClick={(e) => handleSubmit(e)}>Valider</Button>
+                <Button onClick={(e) => handleSubmit(e)} className='bg-blue-500 hover:bg-blue-400'>Valider</Button>
             </form>
 
             <form className={(!openAvatar && user) ? "hidden" : 'flex flex-col items-center justify-center w-[40%] gap-2.5'}>
                 <Label className='text-center'>Avatar</Label>
                 <Input type='file' id="avatar" aria-label="File" onChange={(e) => console.log(setAvatar(e.target.files?.[0]))} accept='image/jpeg, image/jpg, image/png, image/gif' />
-                <Button onClick={(e) => handleSubmitAvatar(e)}>Valider</Button>
+                <Button onClick={(e) => handleSubmitAvatar(e)} className='bg-blue-500 hover:bg-blue-400'>Valider</Button>
             </form>
 
         </>

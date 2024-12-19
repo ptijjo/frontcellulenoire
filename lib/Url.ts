@@ -1,4 +1,4 @@
-const baseUrl="http://api.cellulenoire.fr"
+const baseUrl="http://127.0.0.1:8080"
 
 const Url = {
     connection: baseUrl + "/users_connection",

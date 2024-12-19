@@ -6,6 +6,7 @@ import { fonctionConvertisseur } from '@/lib/ConvertisseurID';
 import { Book } from '@/lib/Interface/book.interface';
 import Url from '@/lib/Url';
 import axios from 'axios';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 
@@ -50,10 +51,7 @@ const UpdateBook = ({ params }: { params: { id: string } }) => {
 
   }, [token, id]);
 
-  const handleCancel = () => {
-    navigate.back();
-  };
-
+ 
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
 
@@ -81,7 +79,7 @@ const UpdateBook = ({ params }: { params: { id: string } }) => {
   return (
     <>
 
-      <form className='flex flex-col justify-center items-center gap-3.5 w-[40%] border p-3.5'>
+      <form className='flex flex-col justify-center items-center gap-3.5 w-[40%] p-3.5'>
         <div className='w-full flex flex-col items-center justify-center'>
           <Label><h2>Titre de l'ouvrage</h2></Label>
           <Input value={title as string} onChange={e => setTitle(e.target.value)} />
@@ -101,7 +99,7 @@ const UpdateBook = ({ params }: { params: { id: string } }) => {
         </div>
 
         <div className='w-full flex flex-row items-center justify-center gap-3.5'>
-          <Button onClick={handleCancel}>Annuler</Button>
+          <Link href="/dashboard"><Button>Annuler</Button></Link>
           <Button onClick={(e) => handleSubmit(e)}>Valider</Button>
         </div>
       </form>

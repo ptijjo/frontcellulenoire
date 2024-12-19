@@ -74,7 +74,7 @@ const Dashboard = () => {
         <>
             {/* Affichagede la barre de recherche */}
             <div className='flex flex-row items-center justify-center w-[80%] lg:w-[60%]'>
-                <Input type='search' className='w-[80%] lg:w-[60%] rounded' value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Search" />
+                <Input type='search'  placeholder="Recherche ouvrage" className='w-[80%] lg:w-[60%] rounded' value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Search" />
             </div>
             {/* Barre de filtrage */}
             <div className='flex flex-row w-[90%] lg:w-[60%] text-[10px] lg:text-lg'>
