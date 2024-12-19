@@ -66,10 +66,6 @@ const Dashboard = () => {
         if (page == 1) setPage(1);
     };
 
-    console.log('====================================');
-    console.log(books.length,itemPerPage);
-    console.log('====================================');
-
     return (
         <>
             {/* Affichagede la barre de recherche */}

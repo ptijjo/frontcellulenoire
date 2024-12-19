@@ -52,7 +52,7 @@ const Enregistrement = ({ params }: { params: { id: string } }) => {
                     <Image src="/logos/logo.jpeg" alt="logo" width={80} height={80} priority className="w-full h-full" />
                 </div >
             </header >
-            <main className='flex flex-col w-full justify-center items-center gap-3.5 mt-[30px]'>
+            <main className='flex flex-col w-full justify-center items-center gap-3.5 mt-[30px] flex-grow'>
                 <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-1.5 w-4/5 m-auto">
                     <Input type="password" placeholder="password" id="password" autoComplete="off" className="rounded-none placeholder-red-400 pl-4" {...register("password", { required: true })} />
                     {errors.password && errors.password.type === "required" && <span className='text-red-700 text-center'>Mot de passe Obligatoire !</span>}
@@ -75,7 +75,6 @@ const Enregistrement = ({ params }: { params: { id: string } }) => {
 
 
             </main>
-            {id}
         </>
     )
 }

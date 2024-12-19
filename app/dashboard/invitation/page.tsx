@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
+
 type Inputs = {
     email: string;
 
@@ -15,6 +16,8 @@ type Inputs = {
 const Invitation = () => {
     const navigate = useRouter();
     const [token, setToken] = useState<string | null>(null);
+    const [message, setMessage] = useState<string | null>(null);
+    const [erreur, setErreur] = useState<string | null>(null);
     const {
         register,
         handleSubmit,
@@ -32,23 +35,32 @@ const Invitation = () => {
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
         try {
             if (token) {
-                const invitation = await axios.post(Url.userById, data, {
+                await axios.post(Url.userById, data, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
                 });
 
-                console.log(invitation.data);
+                setMessage(`Email envoyé à ${data.email}`);
+
+                setTimeout(() => {
+                    setMessage(null)
+                    navigate.push("/dashboard")
+                }, 3000);
             }
         } catch (error: any) {
-            console.error(`${error.response.data.message}`)
+            console.error(`${error.response.data.message}`);
+            setErreur(error.response.data.message);
         }
 
     };
 
     return (
         <>
-            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-1.5 w-[40%] m-auto">
+            <div className={(message !== null) ? 'flex flex-col justify-center items-center gap-y-1.5 w-[40%] text-center text-2xl flex-grow' : "hidden"}>
+                {message}
+            </div>
+            <form onSubmit={handleSubmit(onSubmit)} className={(message === null) ? "flex flex-col gap-y-1.5 w-[40%] m-auto" : "hidden"}>
                 <Input type="email" placeholder="e-mail" id="identifiant" autoComplete="off" className="rounded-none placeholder-red-400 pl-4" {...register("email", { required: true })} aria-label="Email" />
                 {errors.email && errors.email.type === "required" && <span className='text-red-700 text-center'>Email Obligatoire !</span>}
 
@@ -58,7 +70,12 @@ const Invitation = () => {
                     <Button type="submit" className="bg-blue-500 hover:bg-blue-400">Inviter</Button>
                 </div>
 
+                <div className={(erreur === null) ? 'hidden' : "text-2xl text-center text-red"}>
+                    {erreur}
+                </div>
             </form>
+
+
 
 
         </>
