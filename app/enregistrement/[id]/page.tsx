@@ -4,6 +4,9 @@ import Image from 'next/image';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import axios from 'axios';
+import Url from '@/lib/Url';
+import { useRouter } from 'next/navigation';
 
 type Inputs = {
     password: string;
@@ -15,6 +18,8 @@ const Enregistrement = ({ params }: { params: { id: string } }) => {
     const id = params.id as string;
     const [errorMessage, setErrorMessage] = useState("");
 
+    const navigate = useRouter();
+
     const {
         register,
         handleSubmit,
@@ -24,7 +29,6 @@ const Enregistrement = ({ params }: { params: { id: string } }) => {
 
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
         try {
-            console.log(data);
             if (data.password !== data.password2) {
                 setErrorMessage("Les mots de passe ne sont pas identiques");
 
@@ -33,6 +37,11 @@ const Enregistrement = ({ params }: { params: { id: string } }) => {
                 }, 3000);
             }
 
+            await axios.post(Url.createUser + "/" + id, {
+                password: data.password
+            });
+
+            navigate.push("/")
 
 
 
@@ -42,9 +51,6 @@ const Enregistrement = ({ params }: { params: { id: string } }) => {
         }
 
     };
-
-
-
     return (
         <>
             <header className="flex flex-row items-center justify-between p-3.5 w-full text-black">
