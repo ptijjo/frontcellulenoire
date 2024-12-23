@@ -13,6 +13,11 @@ const nextConfig = {
         hostname: 'vibz.s3.eu-central-1.amazonaws.com',
         pathname: '/logo/**', // Facultatif, pour limiter les chemins
       },
+      {
+        protocol: 'https',
+        hostname: 'api.cellulenoire.fr',
+        pathname: '/public/avatar/**', // Facultatif, pour limiter aux avatars
+      }
 
     ],
   },
