@@ -6,7 +6,7 @@ import StoreProvider from "./StoreProvider";
 
 export const metadata: Metadata = {
   title: "Cellule noire",
-  description: "Bibliothèque",
+  description: "bibliothèque, lecture, club, réflexion"
 };
 
 export default function RootLayout({

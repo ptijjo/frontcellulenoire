@@ -17,7 +17,7 @@ export default function Home() {
             <div className="flex flex-col mt-3.5 w-full">
               <LoginPage />
               <Separation />
-              <Link href="#" className="flex text-center m-0 justify-center w-full mb-3.5">Mot de passe oublié ?</Link>
+              <Link href="/forgetPassword" className="flex text-center m-0 justify-center w-full mb-3.5">Mot de passe oublié ?</Link>
             </div>
           </Card>
         </div>
