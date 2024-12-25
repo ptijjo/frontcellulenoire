@@ -45,7 +45,7 @@ const resetPassword = ({ params }: { params: { id: string } }) => {
             };
 
             if (newPassword.status === 200) {
-                setMessage("Un email vous sera transmis d'ici quelques minutes !");
+                setMessage("Votre mot de passe a bien été réninitalisé !");
                 setInterval(() => {
                     setMessage(null);
                 }, 3000);

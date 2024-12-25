@@ -70,7 +70,7 @@ const Dashboard = () => {
         <>
             {/* Affichagede la barre de recherche */}
             <div className='flex flex-row items-center justify-center w-[80%] lg:w-[60%]'>
-                <Input type='search'  placeholder="Recherche ouvrage" className='w-[80%] lg:w-[60%] rounded' value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Search" />
+                <Input type='search' placeholder="Recherche ouvrage" className='w-[80%] lg:w-[60%] rounded' value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Search" />
             </div>
             {/* Barre de filtrage */}
             <div className='flex flex-row w-[90%] lg:w-[60%] text-[10px] lg:text-lg'>
@@ -109,18 +109,18 @@ const Dashboard = () => {
 
             <div className='flex flex-row flex-wrap w-full gap-3.5 p-2.5 items-center justify-center'>
                 {books?.map((book: Book) => (
-                    <Card className='flex flex-col  items-center w-[40%] h-[230px] lg:w-[18%] lg:h-[200px] hover:scale-[105%] shadow-lg  cursor-pointer bg-purple-100 transition-all relative overflow-hidden' key={book.id}>
-                        <CardHeader className='flex h-[80%]'>
-                            <CardTitle className='text-md flex text-center h-[80%]'>
+                    <Card className='flex flex-col  items-center w-[146px] h-[150px] lg:w-[230px] lg:h-[200px] hover:scale-[105%] shadow-lg  cursor-pointer bg-purple-100 transition-all relative overflow-hidden text-black' key={book.id}>
+                        <CardHeader className='flex h-[80%] w-full p-0 m-0 items-center justify-center'>
+                            <CardTitle className='text-md flex text-center h-[80%] w-full items-center p-0 m-0 justify-center'>
                                 {book.title}
                             </CardTitle>
-                            <CardDescription className='flex flex-col text-center text-sm '>
-                                <span>{book.author}</span>
-                                <span>Catégorie :  <ConvertisseurID id={book.categoryId} token={token as string} /></span>
+                            <CardDescription className='flex flex-col text-center text-sm lg:text-base font-medium text-gray-700 w-full text-nowrap mx-auto items-center'>
+                                {book.author}
+                                {/* <span>Catégorie :  <ConvertisseurID id={book.categoryId} token={token as string} /></span> */}
                             </CardDescription>
                         </CardHeader>
                         <CardFooter className='flex flex-row h-[40px] m-0 p-0 text-xl items-center justify-center'>
-                            <Link href={book.url} download={book.title} className='' aria-label={book.title}><FaDownload />
+                            <Link href={book.url} download={book.title} target='_blank' className='' aria-label={book.title}><FaDownload />
                             </Link>
                             {(user?.role !== "user") && <div className='flex flex-row items-center justify-center h-full gap-2.5 m-2.5'>
                                 <MdMode className='text-blue-700 hover:cursor-pointer' onClick={() => handleUpdate(book.id)} />

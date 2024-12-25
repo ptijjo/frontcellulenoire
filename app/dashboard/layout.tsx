@@ -1,8 +1,7 @@
 "use client"
 import React, { useEffect, useState } from 'react'
 import Header from './components/header/Header';
-import Footer from './components/footer/Footer';
-import { login, selectUser, selectUserStatus } from '@/lib/features/users/userSlice';
+import { login, selectUser } from '@/lib/features/users/userSlice';
 import { Dispatch, Selector } from '@/lib/hooks';
 import { useRouter } from 'next/navigation';
 import { getBooks } from '@/lib/features/books/bookSlice';
@@ -31,12 +30,11 @@ const layout = ({ children }: { children: React.ReactNode }) => {
 
 
     return (
-        <div className='w-full flex flex-col items-center'>
+        <div className='flex flex-col items-center w-dvw max-w-7xl m-auto bg-white'>
             <Header pseudo={user?.pseudo} id={user?.id} avatar={user?.avatar} role={user?.role} />
             <main className='flex flex-col w-full items-center gap-3.5 min-h-dvh'>
                 {children}
             </main>
-            <Footer />
         </div>
     )
 }

@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="flex flex-col max-h-screen items-center justify-beetwen w-full max-w-7xl">
+    <main className="flex flex-col max-h-dvh items-center justify-center w-full max-w-7xl m-auto bg-white">
       <div className="flex flex-grow p-3.5 items-center">
         <aside className="hidden md:flex w-1/2 h-1/2 md:rounded-xl md:overflow-hidden">
           <Image src="/images/homepage.jpg" alt="logo_accueil" width={400} height={400} priority className="w-auto h-auto" />
@@ -17,7 +17,7 @@ export default function Home() {
             <div className="flex flex-col mt-3.5 w-full">
               <LoginPage />
               <Separation />
-              <Link href="/forgetPassword" className="flex text-center m-0 justify-center w-full mb-3.5">Mot de passe oublié ?</Link>
+              <Link href="/forgetPassword" className="flex text-center m-0 justify-center w-full lg:w-[30%] mb-3.5 mx-auto hover:text-blue-500">Mot de passe oublié ?</Link>
             </div>
           </Card>
         </div>

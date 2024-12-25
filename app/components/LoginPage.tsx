@@ -46,7 +46,7 @@ const LoginPage = () => {
             <Input type="password" placeholder="password" id="password" autoComplete="false" className="rounded-none" {...register("password", { required: true })} />
             {errors.password && errors.password.type === "required" && <span className="text-center text-red-700">Mot de passe obligatoire !</span>}
 
-            <Button type="submit" className="mt-2.5 bg-blue-400 text-black">Se connecter</Button>
+            <Button type="submit" className="mt-2.5 bg-blue-400 hover:bg-blue-300 text-black w-[80%] mx-auto">Se connecter</Button>
 
             <ToastContainer autoClose={2000} />
         </form>
