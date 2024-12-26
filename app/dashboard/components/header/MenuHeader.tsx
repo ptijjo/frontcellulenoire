@@ -46,8 +46,8 @@ const MenuHeader: React.FC<HeaderProps> = ({ pseudo, id, avatar, role }) => {
                         <AvatarFallback>avatar</AvatarFallback>
                     </Avatar>
                     <p>{pseudo}</p>
-                    {(role === "admin") && <FaShield className='absolute bottom-0 left-[35%] text-red-700' />}
-                    {(role === "modo") && <FaShield className='absolute bottom-0 left-[35%] text-blue-700' />}
+                    <FaShield className={(role === 'admin') ? 'absolute bottom-0 left-[35%] text-red-700' : "hidden"} />
+                    <FaShield className={(role === "modo") ? 'absolute bottom-0 left-[28%] text-blue-700' : "hidden"} />
                 </MenubarTrigger>
                 <MenubarContent className="border-none">
 

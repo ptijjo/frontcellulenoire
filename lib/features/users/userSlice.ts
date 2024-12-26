@@ -59,17 +59,21 @@ export const updatePseudo = createAsyncThunk<any, { id: string; token: string, d
     
 });
 
-export const updateAvatar = createAsyncThunk<any, { id: string, token: string, data: FormData }>("users/updateAvatar", async ({ id, token, data }) => {
-    const response = await axios.put(`${Url.updateAvatar}/${id}`, data, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
-          }
-      });
-      console.log('====================================');
-      console.log(response.data.data.avatar);
-      console.log('====================================');
-      return(response.data.data.avatar);
+export const updateRole = createAsyncThunk<any, { id: string, token: string, data: string }>("users/updateRole", async ({ id, token, data }) => { 
+
+    if (data !== "admin" && data !== "modo" && data !== "user") {
+        return "user";
+     }
+
+    const response = await axios.put(`${Url.userById}/${id}`, {
+        role: data
+    }, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    return response.data.data.role;
 });
 
 export const userSlice = createSlice({
@@ -115,23 +119,21 @@ export const userSlice = createSlice({
             state.error = action.error.message as string;
         }) 
             
-            //Mise à jour de l'avatar de l'utilisateur connecté
-        .addCase(updateAvatar.pending, (state) => {
+        //Mise à jour du role de l'utilisateur connecté
+        .addCase(updateRole.pending, (state) => {
             state.status = "loading";
         })
-
-        .addCase(updateAvatar.fulfilled, (state, action) => {
+        .addCase(updateRole.fulfilled, (state, action) => {
             state.status = "success";
             state.user = {
                 ...state.user!,
-            avatar: action.payload
+                role: action.payload
             };
         })
-
-        .addCase(updateAvatar.rejected, (state, action) => {
+        .addCase(updateRole.rejected, (state, action) => {
             state.status = 'failed';
             state.error = action.error.message as string;
-        }) 
+        })
     },
 
 });

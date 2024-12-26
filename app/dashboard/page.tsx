@@ -68,6 +68,7 @@ const Dashboard = () => {
 
     return (
         <>
+            <h1 className='text-2xl font-bold text-gray-700'>Bibliothèque cellule noire</h1>
             {/* Affichagede la barre de recherche */}
             <div className='flex flex-row items-center justify-center w-[80%] lg:w-[60%]'>
                 <Input type='search' placeholder="Recherche ouvrage" className='w-[80%] lg:w-[60%] rounded' value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Search" />
@@ -75,7 +76,7 @@ const Dashboard = () => {
             {/* Barre de filtrage */}
             <div className='flex flex-row w-[90%] lg:w-[60%] text-[10px] lg:text-lg'>
                 <fieldset className='flex flex-col w-full'>
-                    <legend className='hidden lg:flex'>Catégorie : </legend>
+                    
                     <div className='flex flex-row w-full'>
                         <label className='flex items-center justify-center w-[20%]'>
                             <input type="radio" id="" name="categorie" value="" defaultChecked={true} onChange={handleCategoryFiltre} />

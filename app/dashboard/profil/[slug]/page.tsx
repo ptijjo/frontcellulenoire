@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Selector } from '@/lib/hooks';
-import { selectUser, selectUserError, selectUserStatus, updateAvatar, updatePseudo } from '@/lib/features/users/userSlice';
+import { selectUser, selectUserError, selectUserStatus, updatePseudo } from '@/lib/features/users/userSlice';
 import { Dispatch } from '../../../../lib/hooks';
 import Image from 'next/image';
 
@@ -15,7 +15,6 @@ const Profil = ({ params }: { params: { slug: string } }) => {
     const user = Selector(selectUser);
     const [token, setToken] = useState<string | null>(null);
     const [open, setOpen] = useState<boolean>(false);
-    const [openAvatar, setOpenAvatar] = useState<boolean>(false);
     const [pseudo, setPseudo] = useState<string>("");
     const dispatch = Dispatch();
     const statusUser = Selector(selectUserStatus);
@@ -49,11 +48,13 @@ const Profil = ({ params }: { params: { slug: string } }) => {
     };
 
 
+
+
     return (
         <>
             <div className='flex items-center gap-1.5'>
                 <div className='w-[80px] h-[80px] rounded-full relative'>
-                    <Image src={user?.avatar} alt="avatar" width={80} height={80} priority className='w-full h-full rounded-full' />
+                    <Image src={user?.avatar} alt="avatar" fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" priority className='w-full h-full rounded-full' />
                     {(user?.role === "admin") && <FaShield className='absolute bottom-[-5px] right-[-10%] text-red-700 text-3xl' />}
                     {(user?.role === "modo") && <FaShield className='absolute bottom-[-5px] right-[-10%] text-blue-700 text-3xl' />}
                 </div>

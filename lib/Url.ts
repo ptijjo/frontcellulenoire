@@ -10,7 +10,8 @@ const Url = {
     getCategory: baseUrl + "/categories",
     updateAvatar: baseUrl + "/users_updateAvatar",
     resetPassword: baseUrl + "/users_resetPassword",
-    forgetPassword:baseUrl+ "/users_forgetPassword",
+    forgetPassword: baseUrl + "/users_forgetPassword",
+    updateRole: baseUrl + "/users_updateRole",
 }
 
 export default Url;
