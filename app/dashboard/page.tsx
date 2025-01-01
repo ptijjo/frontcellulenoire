@@ -5,14 +5,14 @@ import React, { useEffect, useState } from 'react';;
 import { getBooks, selectBokkStatus, selectBook } from '@/lib/features/books/bookSlice';
 import { Book } from '@/lib/Interface/book.interface';
 import { Input } from '@/components/ui/input';
-import ConvertisseurID from '@/lib/ConvertisseurID';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { FaDownload } from 'react-icons/fa';
 import { MdDeleteForever, MdMode } from 'react-icons/md';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Loading from './loading';
+import BookCard from './components/BookCard';
+
+
 
 
 const Dashboard = () => {
@@ -66,6 +66,8 @@ const Dashboard = () => {
         if (page == 1) setPage(1);
     };
 
+ 
+
     return (
         <>
             <h1 className='text-2xl font-bold text-gray-700'>Bibliothèque cellule noire</h1>
@@ -76,7 +78,7 @@ const Dashboard = () => {
             {/* Barre de filtrage */}
             <div className='flex flex-row w-[90%] lg:w-[60%] text-[10px] lg:text-lg'>
                 <fieldset className='flex flex-col w-full'>
-                    
+
                     <div className='flex flex-row w-full'>
                         <label className='flex items-center justify-center w-[20%]'>
                             <input type="radio" id="" name="categorie" value="" defaultChecked={true} onChange={handleCategoryFiltre} />
@@ -108,36 +110,28 @@ const Dashboard = () => {
             {(statusBook === "loading" || statusBook === "idle") && <Loading />}
             {(books?.length === 0 && statusBook === "success") && <div className='mt-[20px]'>Pas de livres disponibles ! </div>}
 
-            <div className='flex flex-row flex-wrap w-full gap-3.5 p-2.5 items-center justify-center'>
+            <div className='flex flex-row flex-wrap w-full gap-3.5 items-center justify-center'>
                 {books?.map((book: Book) => (
-                    <Card className='flex flex-col  items-center w-[146px] h-[150px] lg:w-[230px] lg:h-[200px] hover:scale-[105%] shadow-lg  cursor-pointer bg-purple-100 transition-all relative overflow-hidden text-black' key={book.id}>
-                        <CardHeader className='flex h-[80%] w-full p-0 m-0 items-center justify-center'>
-                            <CardTitle className='text-md flex text-center h-[80%] w-full items-center p-0 m-0 justify-center'>
-                                {book.title}
-                            </CardTitle>
-                            <CardDescription className='flex flex-col text-center text-sm lg:text-base font-medium text-gray-700 w-full text-nowrap mx-auto items-center'>
-                                {book.author}
-                                {/* <span>Catégorie :  <ConvertisseurID id={book.categoryId} token={token as string} /></span> */}
-                            </CardDescription>
-                        </CardHeader>
-                        <CardFooter className='flex flex-row h-[40px] m-0 p-0 text-xl items-center justify-center'>
+                    <div className='flex flex-col w-[220px] h-[320px] rounded-md items-center justify-center relative' key={book.id} >
+                        <BookCard title={book.title} author={book.author} />
+                        <div className='flex flex-row h-[40px] m-0 p-0 text-xl items-center justify-center absolute bottom-[20px] left-[60%] transform translate-x-[-50%]'>
                             <Link href={book.url} download={book.title} target='_blank' className='' aria-label={book.title}><FaDownload />
                             </Link>
                             {(user?.role !== "user") && <div className='flex flex-row items-center justify-center h-full gap-2.5 m-2.5'>
                                 <MdMode className='text-blue-700 hover:cursor-pointer' onClick={() => handleUpdate(book.id)} />
                                 <MdDeleteForever className='text-red-700 hover:cursor-pointer' onClick={() => handleDelete(book.id)} />
                             </div>}
-                        </CardFooter>
-                    </Card >
+                        </div>
+                    </div >
                 ))}
-            </div>
+            </div >
 
             {/* Pagination */}
             <div className={(books.length !== 0) ? 'flex gap-3.5' : "hidden"}>
                 <p onClick={handleBefore} className={(page === 1) ? "hidden" : 'cursor-pointer'}>Precedent</p>
                 <p>---</p>
                 <p onClick={handleNext} className={(books.length === itemPerPage) ? 'cursor-pointer' : "hidden"} >Suivant</p>
-            </div>
+            </div >
 
         </>
     )
