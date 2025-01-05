@@ -48,10 +48,14 @@ const Users = () => {
 
     const handleNext = () => {
         setPage(page + 1);
+        // Faire défiler vers le haut de la page
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const handleBefore = () => {
-        setPage(page - 1)
+        setPage(page - 1);
+        // Faire défiler vers le haut de la page
+        window.scrollTo({ top: 0, behavior: 'smooth' });
 
         if (page == 1) setPage(1)
     };

@@ -30,6 +30,7 @@ const Dashboard = () => {
 
     const handleCategoryFiltre = (event: React.ChangeEvent<HTMLInputElement>) => {
         setFiltre(event.target.value);
+        setPage(1);
     };
 
     //Vérification du token pour vérifier l'autorisation d'afficher les livres
@@ -58,15 +59,19 @@ const Dashboard = () => {
 
     const handleNext = () => {
         setPage(page + 1);
+        // Faire défiler vers le haut de la page
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const handleBefore = () => {
         setPage(page - 1);
+        // Faire défiler vers le haut de la page
+        window.scrollTo({ top: 0, behavior: 'smooth' });
 
         if (page == 1) setPage(1);
     };
 
- 
+
 
     return (
         <>
@@ -112,9 +117,9 @@ const Dashboard = () => {
 
             <div className='flex flex-row flex-wrap w-full gap-3.5 items-center justify-center'>
                 {books?.map((book: Book) => (
-                    <div className='flex flex-col w-[220px] h-[320px] rounded-md items-center justify-center relative' key={book.id} >
+                    <div className='flex flex-col w-[220px] h-[250px] lg:h-[320px] rounded-md items-center justify-center relative' key={book.id} >
                         <BookCard title={book.title} author={book.author} />
-                        <div className='flex flex-row h-[40px] m-0 p-0 text-xl items-center justify-center absolute bottom-[20px] left-[60%] transform translate-x-[-50%]'>
+                        <div className='flex flex-row h-[40px] m-0 p-0 text-xl items-center justify-center absolute bottom-[0px] lg:bottom-[20px] left-[60%] transform translate-x-[-50%]'>
                             <Link href={book.url} download={book.title} target='_blank' className='' aria-label={book.title}><FaDownload />
                             </Link>
                             {(user?.role !== "user") && <div className='flex flex-row items-center justify-center h-full gap-2.5 m-2.5'>
