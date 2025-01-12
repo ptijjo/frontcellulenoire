@@ -1,6 +1,5 @@
 "use client"
 import { Input } from '@/components/ui/input'
-import { Dispatch } from '@/lib/hooks';
 import React, { useEffect, useState } from 'react'
 import { Book } from '../../../lib/Interface/book.interface';
 import axios from 'axios';
@@ -16,9 +15,7 @@ const Users = () => {
     const [page, setPage] = useState<number>(1);
     const [itemPerPage, setItemPerPage] = useState<number>(20);
     const [users, setUsers] = useState<User[] | []>([]);
-
-
-
+   
     //Vérification du token pour vérifier l'autorisation d'afficher les livres
     useEffect(() => {
         if (typeof window !== "undefined") {
@@ -59,8 +56,8 @@ const Users = () => {
 
         if (page == 1) setPage(1)
     };
-
-
+    
+ 
     return (
         <>
             {/* Affichagede la barre de recherche */}

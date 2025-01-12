@@ -14,7 +14,7 @@ const BookCard: React.FC<BookProps> = ({
     spineColor = '#3b3b3b', // Couleur par défaut de la tranche
 }) => {
     return (
-        <div style={{ ...styles.bookContainer, backgroundColor: coverColor }}>
+        <div style={{ ...styles.bookContainer, backgroundColor: coverColor }} className='hover:scale-[1.05] transition-transform duration-300'>
             <div style={{ ...styles.spine, backgroundColor: spineColor }}>
                 <p style={styles.spineText}>{author}</p>
             </div>
@@ -34,6 +34,7 @@ const styles: Record<string, React.CSSProperties> = {
         // margin: '20px',
         borderRadius: '8px',
         overflow: 'hidden',
+        cursor: 'pointer',
     },
     spine: {
         width: '40px',

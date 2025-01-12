@@ -20,7 +20,7 @@ const Userid = ({ params }: { params: { id: string } }) => {
     const connected = Selector(selectUser);
 
     const navigate = useRouter();
-
+  
 
 
     //Vérification du token pour vérifier l'autorisation d'afficher les livres
@@ -50,6 +50,7 @@ const Userid = ({ params }: { params: { id: string } }) => {
 
         }
     }, [token, id]);
+
 
     const handleClick = () => {
         setOpen(!open);

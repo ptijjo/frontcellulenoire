@@ -13,7 +13,8 @@ const layout = ({ children }: { children: React.ReactNode }) => {
     const router = useRouter();
     const [token, setToken] = useState<string | null>(null);
     const user = Selector(selectUser);
-
+    const errorLogin = Selector(state => state.user.error);
+    const navigate = useRouter();
     //Vérification de l'existance d'un token pour vérifier qui est connecté et si pas de token on retourne a la page de connection
     useEffect(() => {
         if (typeof window !== "undefined") {
@@ -27,6 +28,23 @@ const layout = ({ children }: { children: React.ReactNode }) => {
             }
         }
     }, [token, dispatch, login, getBooks]);
+
+    useEffect(() => {
+        if (errorLogin !== null) {
+            setTimeout(() => {
+                navigate.push("/");
+            }, 5000);
+        }
+    }, [errorLogin]);
+
+    if (errorLogin !== null) {
+        return (
+            <>
+                <div className='text-red-700 text-2xl font-bold text-center'>Vous n'êtes pas autorisé à accéder à cette page</div>
+                <div className='text-xl font-bold text-center'>Vous serez rediriger vers la page de connection dans quelques secondes...</div>
+            </>
+        )
+    };
 
 
     return (

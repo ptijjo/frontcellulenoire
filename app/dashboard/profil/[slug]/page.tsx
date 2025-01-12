@@ -10,6 +10,7 @@ import { Dispatch } from '../../../../lib/hooks';
 import Image from 'next/image';
 
 
+
 const Profil = ({ params }: { params: { slug: string } }) => {
 
     const user = Selector(selectUser);
@@ -46,9 +47,6 @@ const Profil = ({ params }: { params: { slug: string } }) => {
             console.error(error);
         }
     };
-
-
-
 
     return (
         <>

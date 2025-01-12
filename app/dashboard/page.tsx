@@ -11,9 +11,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Loading from './loading';
 import BookCard from './components/BookCard';
-
-
-
+import { MdOutlineKeyboardDoubleArrowLeft } from "react-icons/md";
 
 const Dashboard = () => {
     const [token, setToken] = useState<string | null>(null);
@@ -26,7 +24,9 @@ const Dashboard = () => {
     const [itemPerPage, setItemPerPage] = useState<number>(20);
     const navigate = useRouter();
 
+
     const dispatch = Dispatch();
+
 
     const handleCategoryFiltre = (event: React.ChangeEvent<HTMLInputElement>) => {
         setFiltre(event.target.value);
@@ -43,6 +43,7 @@ const Dashboard = () => {
 
     useEffect(() => {
         if (token) {
+            (search !== "") && page == 1;
             dispatch(getBooks({ token, search, filtre, page, itemPerPage }));
         };
 
@@ -71,6 +72,11 @@ const Dashboard = () => {
         if (page == 1) setPage(1);
     };
 
+    const handleBegin = () => {
+        setPage(1);
+        // Faire défiler vers le haut de la page
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 
 
     return (
@@ -132,12 +138,12 @@ const Dashboard = () => {
             </div >
 
             {/* Pagination */}
-            <div className={(books.length !== 0) ? 'flex gap-3.5' : "hidden"}>
-                <p onClick={handleBefore} className={(page === 1) ? "hidden" : 'cursor-pointer'}>Precedent</p>
+            <div className={(books.length !== 0) ? 'flex gap-3.5 my-3.5' : "hidden"}>
+                <MdOutlineKeyboardDoubleArrowLeft className={(page === 1) ? "hidden" : 'cursor-pointer hover:text-gray-700 text-2xl'} onClick={handleBegin} />
+                <p onClick={handleBefore} className={(page === 1) ? "hidden" : 'cursor-pointer hover:text-gray-700'}>Precedent</p>
                 <p>---</p>
-                <p onClick={handleNext} className={(books.length === itemPerPage) ? 'cursor-pointer' : "hidden"} >Suivant</p>
+                <p onClick={handleNext} className={(books.length === itemPerPage) ? 'cursor-pointer hover:text-gray-700' : "hidden"} >Suivant</p>
             </div >
-
         </>
     )
 }

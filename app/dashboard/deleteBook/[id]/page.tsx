@@ -3,10 +3,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import ConvertisseurID from '@/lib/ConvertisseurID';
 import { deleteBook } from '@/lib/features/books/bookSlice';
-import { Dispatch } from '@/lib/hooks';
+import { Dispatch} from '@/lib/hooks';
 import { Book } from '@/lib/Interface/book.interface';
-import Url from '@/lib/Url';
-import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 
@@ -18,6 +16,7 @@ const DeleteBook = ({ params }: { params: { id: string } }) => {
   const id = params.id as string;
   const navigate = useRouter();
   const dispatch = Dispatch();
+  
 
   //Vérification du token pour vérifier l'autorisation d'afficher les livres
   useEffect(() => {
@@ -26,24 +25,6 @@ const DeleteBook = ({ params }: { params: { id: string } }) => {
       setToken(storedToken);
     }
   }, []);
-
-  useEffect(() => {
-    if (token) {
-      const getDeletedBook = async (id: string, token: string) => {
-        try {
-          const deleteBook = await axios.get(`${Url.getBooks}/${id}`, {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          });
-          setBook(deleteBook.data.data);
-        } catch (error) {
-          console.log(error)
-        }
-      };
-      getDeletedBook(id, token)
-    };
-  }, [id, token]);
 
   const handleCancel = () => {
     navigate.back();
