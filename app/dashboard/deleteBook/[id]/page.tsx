@@ -5,6 +5,8 @@ import ConvertisseurID from '@/lib/ConvertisseurID';
 import { deleteBook } from '@/lib/features/books/bookSlice';
 import { Dispatch} from '@/lib/hooks';
 import { Book } from '@/lib/Interface/book.interface';
+import Url from '@/lib/Url';
+import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 
@@ -26,6 +28,26 @@ const DeleteBook = ({ params }: { params: { id: string } }) => {
     }
   }, []);
 
+  useEffect(() => {
+    if (token) {
+      const getUpdateBook = async (id: string, token: string) => {
+        try {
+          const getBook = await axios.get(`${Url.getBooks}/${id}`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+          setBook(getBook.data.data);
+        } catch (error) {
+          console.log(error)
+        }
+      };
+
+      getUpdateBook(id, token)
+    };
+
+  }, [token, id]);
+
   const handleCancel = () => {
     navigate.back();
   };
@@ -38,9 +60,9 @@ const DeleteBook = ({ params }: { params: { id: string } }) => {
 
   };
 
+
   if (book) return (
     <>
-
       <h2>Etes-vous sûre de vouloir supprimer ce livre? : </h2>
 
       <Card className='flex flex-row w-[230px] h-[180px] hover:scale-[101%]'>
@@ -48,7 +70,7 @@ const DeleteBook = ({ params }: { params: { id: string } }) => {
           <CardTitle className='text-md flex h-[80%] gap-2.5'>
             {book?.title}
           </CardTitle>
-          <CardDescription>
+          <CardDescription className='text-center'>
             <span>{book?.author}</span><br />
             <span>Catégorie :  <ConvertisseurID id={book?.categoryId as string} token={token as string} /></span>
           </CardDescription>

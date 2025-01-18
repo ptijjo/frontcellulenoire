@@ -46,8 +46,8 @@ const MenuHeader: React.FC<HeaderProps> = ({ pseudo, id, avatar, role }) => {
                         <AvatarFallback>avatar</AvatarFallback>
                     </Avatar>
                     <p>{pseudo}</p>
-                    <FaShield className={(role === 'admin') ? 'absolute bottom-0 left-[35%] text-red-700' : "hidden"} />
-                    <FaShield className={(role === "modo") ? 'absolute bottom-0 left-[28%] text-blue-700' : "hidden"} />
+                    <FaShield className={(role === 'admin') ? 'absolute bottom-0 left-[30%] text-red-700' : "hidden"} />
+                    <FaShield className={(role === "modo") ? 'absolute bottom-0 left-[30%] text-blue-700' : "hidden"} />
                 </MenubarTrigger>
                 <MenubarContent className="border-none">
 
@@ -64,7 +64,7 @@ const MenuHeader: React.FC<HeaderProps> = ({ pseudo, id, avatar, role }) => {
                     </MenubarItem>
 
                     <MenubarItem className={(role !== "user" ? "flex flex-col justify-center items-center w-1/2 relative left-12 " : "hidden")}>
-                        <Link href="/dashboard/ajout" className="hover:bg-blue-500 rounded px-2.5 "><p className='text-black'>ajout de livre</p></Link>
+                        <Link href="/dashboard/ajout" className="hover:bg-blue-500 rounded"><p className='text-black'>Ajout livre</p></Link>
                     </MenubarItem>
 
                     <MenubarItem className=" flex flex-col justify-center items-center w-1/2 relative left-12">
