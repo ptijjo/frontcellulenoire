@@ -60,11 +60,14 @@ const Enregistrement = ({ params }: { params: { id: string } }) => {
             </header >
             <main className='flex flex-col w-full justify-center items-center gap-3.5 mt-[30px] flex-grow'>
                 <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-1.5 w-4/5 m-auto">
-                    <Input type="password" placeholder="password" id="password" autoComplete="off" className="rounded-none placeholder-red-400 pl-4" {...register("password", { required: true })} />
-                    {errors.password && errors.password.type === "required" && <span className='text-red-700 text-center'>Mot de passe Obligatoire !</span>}
+                    <Input type="password" placeholder="password" id="password" autoComplete="off" className="rounded-none placeholder-red-400 pl-4" {...register("password", { required: true, pattern: /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/ })} />
+                    {errors.password && errors.password.type === "required" && <span className='text-red-700 text-center'>Le mot de passe Obligatoire !</span>}
+                    {errors.password && errors.password.type === "pattern" && <span className='text-red-700 text-center'>Le mot de passe doit contenir entre 8 et 16 caractères, avec au moins une majuscule, un chiffre et un symbole.</span>}
 
                     <Input type="password" placeholder="confirmer password" id="password2" autoComplete="off" className="rounded-none placeholder-red-400 pl-4" {...register("password2", { required: true })} />
-                    {errors.password2 && errors.password2.type === "required" && <span className='text-red-700 text-center'>Mot de passe Obligatoire !</span>}
+                    {errors.password2 && errors.password2.type === "required" && <span className='text-red-700 text-center'>Le mot de passe Obligatoire !</span>}
+                    {errors.password && errors.password.type === "pattern" && <span className='text-red-700 text-center'>Le mot de passe doit contenir entre 8 et 16 caractères, avec au moins une majuscule, un chiffre et un symbole.</span>}
+
                     {errorMessage && (
                         <p id="egalitePassword" className="text-red-500">
                             {errorMessage}
