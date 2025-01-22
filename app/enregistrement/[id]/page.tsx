@@ -35,6 +35,7 @@ const Enregistrement = ({ params }: { params: { id: string } }) => {
                 setTimeout(() => {
                     setErrorMessage("");
                 }, 3000);
+                return;
             }
 
             await axios.post(Url.createUser + "/" + id, {
