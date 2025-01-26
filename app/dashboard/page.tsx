@@ -2,7 +2,7 @@
 import { selectUser } from '@/lib/features/users/userSlice';
 import { Dispatch, Selector } from '@/lib/hooks';
 import React, { useEffect, useState } from 'react';;
-import { getBooks, selectBokkStatus, selectBook } from '@/lib/features/books/bookSlice';
+import { getBooks, selectBokkStatus, selectBook, selectNbBook, totalBook } from '@/lib/features/books/bookSlice';
 import { Book } from '@/lib/Interface/book.interface';
 import { Input } from '@/components/ui/input';
 import { FaDownload } from 'react-icons/fa';
@@ -13,20 +13,21 @@ import Loading from './loading';
 import BookCard from './components/BookCard';
 import { MdOutlineKeyboardDoubleArrowLeft } from "react-icons/md";
 
+
+
+
 const Dashboard = () => {
     const [token, setToken] = useState<string | null>(null);
     const user = Selector(selectUser);
     const books: Book[] = Selector(selectBook);
+    const nbBooks: number = Selector(selectNbBook);
     const statusBook: string = Selector(selectBokkStatus);
     const [search, setSearch] = useState<string>("");
     const [filtre, setFiltre] = useState<string>("");
     const [page, setPage] = useState<number>(1);
     const [itemPerPage, setItemPerPage] = useState<number>(20);
     const navigate = useRouter();
-
-
     const dispatch = Dispatch();
-
 
     const handleCategoryFiltre = (event: React.ChangeEvent<HTMLInputElement>) => {
         setFiltre(event.target.value);
@@ -45,9 +46,11 @@ const Dashboard = () => {
         if (token) {
             (search !== "") && page == 1;
             dispatch(getBooks({ token, search, filtre, page, itemPerPage }));
+            dispatch(totalBook(token));
         };
 
     }, [token, search, filtre, page, dispatch, itemPerPage]);
+
 
 
     const handleDelete = (id: string) => {
@@ -76,7 +79,13 @@ const Dashboard = () => {
         setPage(1);
         // Faire défiler vers le haut de la page
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const getDisplayedBooksCount = (): number => {
+        const pageBook = Math.min(page * itemPerPage, nbBooks);
+        return pageBook;
     }
+
 
 
     return (
@@ -87,32 +96,47 @@ const Dashboard = () => {
                 <Input type='search' placeholder="Recherche ouvrage" className='w-[80%] lg:w-[60%] rounded' value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Search" />
             </div>
             {/* Barre de filtrage */}
-            <div className='flex flex-row w-[90%] lg:w-[60%] text-[10px] lg:text-lg'>
-                <fieldset className='flex flex-col w-full'>
+            <div className='flex flex-row w-full text-[10px] lg:text-lg justify-center'>
+                <fieldset className='flex flex-col w-[90%] justify-center items-center'>
 
-                    <div className='flex flex-row w-full'>
-                        <label className='flex items-center justify-center w-[20%]'>
-                            <input type="radio" id="" name="categorie" value="" defaultChecked={true} onChange={handleCategoryFiltre} />
+                    <div className='flex flex-row w-full flex-wrap justify-around items-center gap-1.5 px-1.5' >
+                        <label className='flex items-center justify-center w-[%]'>
+                            <input type="radio" id="" name="categorie" value="" defaultChecked={true} onChange={handleCategoryFiltre} className='' />
                             Tout
                         </label>
-                        <label className='flex items-center justify-center w-[20%]'>
+                        <label className='flex items-center justify-center'>
                             <input type="radio" name="categorie" value="histoire" onChange={handleCategoryFiltre} />
                             Histoire
                         </label>
 
-                        <label className='flex items-center justify-center w-[20%]'>
+                        <label className='flex items-center justify-center'>
                             <input type="radio" name="categorie" value="spiritualite" onChange={handleCategoryFiltre} />
                             Spiritualité
                         </label>
 
-                        <label className='flex items-center justify-center w-[20%]'>
+                        <label className='flex items-center justify-center w-[%]'>
                             <input type="radio" name="categorie" value="religion" onChange={handleCategoryFiltre} />
                             Religion
                         </label>
 
-                        <label className='flex items-center justify-center w-[20%]'>
+                        <label className='flex items-center justify-center w-[%]'>
                             <input type="radio" name="categorie" value="philosophie" onChange={handleCategoryFiltre} />
                             Philosophie
+                        </label>
+
+                        <label className='flex items-center justify-center w-[%]'>
+                            <input type="radio" name="categorie" value="jeunesse" onChange={handleCategoryFiltre} />
+                            Jeunesse
+                        </label>
+
+                        <label className='flex items-center justify-center w-[%]'>
+                            <input type="radio" name="categorie" value="sciences" onChange={handleCategoryFiltre} />
+                            Sciences
+                        </label>
+
+                        <label className='flex items-center justify-center w-[%]'>
+                            <input type="radio" name="categorie" value="langue" onChange={handleCategoryFiltre} />
+                            Langues
                         </label>
                     </div>
                 </fieldset>
@@ -123,6 +147,7 @@ const Dashboard = () => {
 
             <div className='flex flex-row flex-wrap w-full gap-3.5 items-center justify-center'>
                 {books?.map((book: Book) => (
+
                     <div className='flex flex-col w-[220px] h-[250px] lg:h-[320px] rounded-md items-center justify-center relative' key={book.id} >
                         <BookCard title={book.title} author={book.author} />
                         <div className='flex flex-row h-[40px] m-0 p-0 text-xl items-center justify-center absolute bottom-[0px] lg:bottom-[20px] left-[60%] transform translate-x-[-50%]'>
@@ -141,11 +166,11 @@ const Dashboard = () => {
             <div className={(books.length !== 0) ? 'flex gap-3.5 my-3.5' : "hidden"}>
                 <MdOutlineKeyboardDoubleArrowLeft className={(page === 1) ? "hidden" : 'cursor-pointer hover:text-gray-700 text-2xl'} onClick={handleBegin} />
                 <p onClick={handleBefore} className={(page === 1) ? "hidden" : 'cursor-pointer hover:text-gray-700'}>Precedent</p>
-                <p>---</p>
+                <p className={(nbBooks) ? 'border' : 'hidden'}>{getDisplayedBooksCount()} - {nbBooks}</p>
                 <p onClick={handleNext} className={(books.length === itemPerPage) ? 'cursor-pointer hover:text-gray-700' : "hidden"} >Suivant</p>
             </div >
         </>
     )
-}
+};
 
-export default Dashboard
+export default Dashboard;

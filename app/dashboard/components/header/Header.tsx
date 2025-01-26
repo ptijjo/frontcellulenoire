@@ -20,7 +20,7 @@ const Header: React.FC<HeaderProps> = ({ pseudo, id, avatar, role }) => {
                     <Image src="/logos/logo.jpeg" alt="logo" width={80} height={80} priority className="w-full h-full" />
                 </div >
             </Link>
-            <div className='flex items-center justify-center w-[30%] lg:w-[10%] text-[10px] lg:text-lg'>
+            <div className='flex items-center justify-center w-[30%] lg:w-[20%] xl:w-[10%] text-[10px] lg:text-lg'>
                 <MenuHeader pseudo={pseudo} id={id} avatar={avatar} role={role} />
             </div>
         </header >

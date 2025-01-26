@@ -3,24 +3,18 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { Book } from '../../Interface/book.interface';
 
-// interface Book {
-//     id: string;
-//     title: string;
-//     url: string;
-//     categoryId: string;
-//     uploadedAt: Date;
-// };
-
 interface bookState {
     book: Book[] | [];
     status: "idle" | "loading" | "success" | "failed";
     error: string | null;
+    total: number;
 };
 
 const initialState: bookState = {
     book: [],
     status: "idle",
     error: null,
+    total:0,
 };
 
 export const getBooks = createAsyncThunk < any, { token: string; search: string; filtre: string; page: number; itemPerPage?:number}> ("books/getBooks", async ({ token, search, filtre, page=1,itemPerPage=20 }) => {
@@ -33,13 +27,22 @@ export const getBooks = createAsyncThunk < any, { token: string; search: string;
     return response.data;
 });
 
-export const deleteBook = createAsyncThunk<any, { id: string; token:string}>("books/deleteBook", async({ id, token }) => {
+export const deleteBook = createAsyncThunk<any, { id: string; token: string }>("books/deleteBook", async ({ id, token }) => {
     const response = await axios.delete(`${Url.getBooks}/${id}`, {
         headers: {
             Authorization: `Bearer ${token}`
         }
     });
     return response.data;
+});
+
+export const totalBook = createAsyncThunk("books/nbBook", async (token:string) => {
+        const totalLivre = await axios.get(Url.nbBooks, {
+             headers: {
+                 Authorization: `Bearer ${token as string}`
+             }
+         });
+    return (totalLivre.data);
 })
 
 export const bookSlice = createSlice({
@@ -61,7 +64,7 @@ export const bookSlice = createSlice({
             })
             .addCase(getBooks.rejected, (state, action) => {
                 state.status = "failed";
-                state.error = action.error.message as string || "Failed to fech books";
+                state.error = action.error.message as string || "Failed to fetch books";
             })
             
 
@@ -80,10 +83,22 @@ export const bookSlice = createSlice({
                 state.status = "failed";
                 state.error = action.error.message as string;
             })
+            .addCase(totalBook.pending, state => {
+                state.status = "loading";
+            })
+            .addCase(totalBook.rejected, (state, action) => {
+                state.status = "failed";
+                state.error = action.error.message as string;
+            })
+            .addCase(totalBook.fulfilled, (state, action) => {
+                state.status = "success";
+                state.total = action.payload.data
+        })
     },
 });
 
 export const selectBook = (state: any) => state.book.book;
+export const selectNbBook = (state: any) => state.book.total;
 export const selectBokkStatus = (state: any) => state.book.status;
 
 export default bookSlice.reducer;

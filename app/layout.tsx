@@ -11,7 +11,6 @@ export const metadata: Metadata = {
   description: "bibliothèque, lecture, club, réflexion"
 };
 
-const GA_MEASUREMENT_ID = "G-6PLXY6GSBW"; // Remplacez par votre ID de mesure
 
 export default function RootLayout({
   children,

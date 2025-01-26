@@ -1,21 +1,16 @@
 import React from 'react';
 
+
 interface BookProps {
     title: string;
     author: string;
-    coverColor?: string;
-    spineColor?: string;
-}
+};
 
-const BookCard: React.FC<BookProps> = ({
-    title,
-    author,
-    coverColor = '#f4f4f4', // Couleur par défaut de la couverture
-    spineColor = '#3b3b3b', // Couleur par défaut de la tranche
-}) => {
+const BookCard: React.FC<BookProps> = ({ title, author }) => {
+
     return (
-        <div style={{ ...styles.bookContainer, backgroundColor: coverColor }} className='hover:scale-[1.05] transition-transform duration-300'>
-            <div style={{ ...styles.spine, backgroundColor: spineColor }}>
+        <div style={{ ...styles.bookContainer, backgroundColor: "#f4f4f4" }} className='hover:scale-[1.05] transition-transform duration-300'>
+            <div style={{ ...styles.spine, backgroundColor: "#3b3b3b" }}>
                 <p style={styles.spineText}>{author}</p>
             </div>
             <div style={styles.cover}>

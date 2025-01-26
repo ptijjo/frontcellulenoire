@@ -7,6 +7,7 @@ const Url = {
     userById: baseUrl + "/users",
     getBooks: baseUrl + "/books",
     addBooks: baseUrl + "/books",
+    nbBooks: baseUrl + "/books_totalBooks",
     getCategory: baseUrl + "/categories",
     updateAvatar: baseUrl + "/users_updateAvatar",
     resetPassword: baseUrl + "/users_resetPassword",
