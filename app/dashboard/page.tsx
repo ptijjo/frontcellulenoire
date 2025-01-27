@@ -11,7 +11,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Loading from './loading';
 import BookCard from './components/BookCard';
-import { MdOutlineKeyboardDoubleArrowLeft } from "react-icons/md";
+import { MdOutlineKeyboardDoubleArrowLeft, MdOutlineKeyboardDoubleArrowRight } from "react-icons/md";
+
 
 
 
@@ -52,7 +53,6 @@ const Dashboard = () => {
     }, [token, search, filtre, page, dispatch, itemPerPage]);
 
 
-
     const handleDelete = (id: string) => {
         navigate.push("/dashboard/deleteBook/" + id)
     };
@@ -84,6 +84,12 @@ const Dashboard = () => {
     const getDisplayedBooksCount = (): number => {
         const pageBook = Math.min(page * itemPerPage, nbBooks);
         return pageBook;
+    };
+
+    const handleEnd = () => {
+        setPage(Math.round(nbBooks / itemPerPage));
+        // Faire défiler vers le haut de la page
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
 
@@ -123,7 +129,7 @@ const Dashboard = () => {
                             <input type="radio" name="categorie" value="philosophie" onChange={handleCategoryFiltre} />
                             Philosophie
                         </label>
-
+                        {/* 
                         <label className='flex items-center justify-center w-[%]'>
                             <input type="radio" name="categorie" value="jeunesse" onChange={handleCategoryFiltre} />
                             Jeunesse
@@ -137,7 +143,7 @@ const Dashboard = () => {
                         <label className='flex items-center justify-center w-[%]'>
                             <input type="radio" name="categorie" value="langue" onChange={handleCategoryFiltre} />
                             Langues
-                        </label>
+                        </label> */}
                     </div>
                 </fieldset>
 
@@ -168,6 +174,8 @@ const Dashboard = () => {
                 <p onClick={handleBefore} className={(page === 1) ? "hidden" : 'cursor-pointer hover:text-gray-700'}>Precedent</p>
                 <p className={(nbBooks) ? 'border' : 'hidden'}>{getDisplayedBooksCount()} - {nbBooks}</p>
                 <p onClick={handleNext} className={(books.length === itemPerPage) ? 'cursor-pointer hover:text-gray-700' : "hidden"} >Suivant</p>
+                <MdOutlineKeyboardDoubleArrowRight onClick={handleEnd} className={(books.length === itemPerPage) ? 'cursor-pointer hover:text-gray-700 text-2xl' : "hidden"}/>
+
             </div >
         </>
     )
