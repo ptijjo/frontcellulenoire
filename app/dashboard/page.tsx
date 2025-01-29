@@ -87,7 +87,7 @@ const Dashboard = () => {
     };
 
     const handleEnd = () => {
-        setPage(Math.round(nbBooks / itemPerPage));
+        setPage(Math.ceil(nbBooks / itemPerPage));
         // Faire défiler vers le haut de la page
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -174,7 +174,7 @@ const Dashboard = () => {
                 <p onClick={handleBefore} className={(page === 1) ? "hidden" : 'cursor-pointer hover:text-gray-700'}>Precedent</p>
                 <p className={(nbBooks) ? 'border' : 'hidden'}>{getDisplayedBooksCount()} - {nbBooks}</p>
                 <p onClick={handleNext} className={(books.length === itemPerPage) ? 'cursor-pointer hover:text-gray-700' : "hidden"} >Suivant</p>
-                <MdOutlineKeyboardDoubleArrowRight onClick={handleEnd} className={(books.length === itemPerPage) ? 'cursor-pointer hover:text-gray-700 text-2xl' : "hidden"}/>
+                <MdOutlineKeyboardDoubleArrowRight onClick={handleEnd} className={(books.length === itemPerPage) ? 'cursor-pointer hover:text-gray-700 text-2xl' : "hidden"} />
 
             </div >
         </>
