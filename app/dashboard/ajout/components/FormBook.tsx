@@ -81,6 +81,7 @@ const FormBook = () => {
                 <option value="religion">Religion</option>
                 <option value="spiritualite">Spiritualité</option>
                 <option value="philosophie">Philosophie</option>
+                <option value="langue">Langues</option>
             </select>
             {errors.categoryName && errors.categoryName.type === "required" && <span>Categorie  obligatoire</span>}
 

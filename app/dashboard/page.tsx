@@ -90,7 +90,7 @@ const Dashboard = () => {
         setPage(Math.ceil(nbBooks / itemPerPage));
         // Faire défiler vers le haut de la page
         window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    };
 
 
 
@@ -138,12 +138,12 @@ const Dashboard = () => {
                         <label className='flex items-center justify-center w-[%]'>
                             <input type="radio" name="categorie" value="sciences" onChange={handleCategoryFiltre} />
                             Sciences
-                        </label>
+                        </label>*/}
 
                         <label className='flex items-center justify-center w-[%]'>
                             <input type="radio" name="categorie" value="langue" onChange={handleCategoryFiltre} />
                             Langues
-                        </label> */}
+                        </label>
                     </div>
                 </fieldset>
 
