@@ -129,13 +129,13 @@ const Dashboard = () => {
                             <input type="radio" name="categorie" value="philosophie" onChange={handleCategoryFiltre} />
                             Philosophie
                         </label>
-                        {/* 
-                        <label className='flex items-center justify-center w-[%]'>
-                            <input type="radio" name="categorie" value="jeunesse" onChange={handleCategoryFiltre} />
-                            Jeunesse
-                        </label>
 
                         <label className='flex items-center justify-center w-[%]'>
+                            <input type="radio" name="categorie" value="roman" onChange={handleCategoryFiltre} />
+                            Roman
+                        </label>
+
+                        {/*<label className='flex items-center justify-center w-[%]'>
                             <input type="radio" name="categorie" value="sciences" onChange={handleCategoryFiltre} />
                             Sciences
                         </label>*/}
