@@ -55,15 +55,15 @@ const MenuHeader: React.FC<HeaderProps> = ({ pseudo, id, avatar, role }) => {
                         <button className='hover:bg-blue-500 rounded px-2.5 text-black' onClick={() => HandleProfil(id)}>Profil</button>
                     </MenubarItem>
 
-                    <MenubarItem className={(role !== "user" ? "flex flex-col justify-center items-center w-1/2 relative left-12" : "hidden")}>
+                    <MenubarItem className={(role !== "user" && role!=="new" ? "flex flex-col justify-center items-center w-1/2 relative left-12" : "hidden")}>
                         <Link href="/dashboard/invitation" className="hover:bg-blue-500 rounded px-2.5 text-black"><p className='text-black'>Invitation</p></Link>
                     </MenubarItem>
 
-                    <MenubarItem className={(role !== "user" ? "flex flex-col justify-center items-center w-1/2 relative left-12" : "hidden")}>
+                    <MenubarItem className={(role !== "user" && role!=="new" ? "flex flex-col justify-center items-center w-1/2 relative left-12" : "hidden")}>
                         <Link href="/dashboard/users" className="hover:bg-blue-500 rounded px-2.5 text-black"><p className='text-black'>Utilisateurs</p></Link>
                     </MenubarItem>
 
-                    <MenubarItem className={(role !== "user" ? "flex flex-col justify-center items-center w-1/2 relative left-12 " : "hidden")}>
+                    <MenubarItem className={(role !== "user" && role!=="new" ? "flex flex-col justify-center items-center w-1/2 relative left-12 " : "hidden")}>
                         <Link href="/dashboard/ajout" className="hover:bg-blue-500 rounded"><p className='text-black'>Ajout livre</p></Link>
                     </MenubarItem>
 
