@@ -13,6 +13,7 @@ const Url = {
     resetPassword: baseUrl + "/users_resetPassword",
     forgetPassword: baseUrl + "/users_forgetPassword",
     updateRole: baseUrl + "/users_updateRole",
+    downloadBook: baseUrl+"/books_download",
 }
 
 export default Url;

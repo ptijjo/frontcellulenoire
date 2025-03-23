@@ -7,7 +7,8 @@ interface User {
     email: string,
     role: string,
     pseudo: string,
-    avatar:string,
+    avatar: string,
+    download:number,
 };
 
 interface userState {

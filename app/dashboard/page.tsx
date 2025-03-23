@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation';
 import Loading from './loading';
 import BookCard from './components/BookCard';
 import { MdOutlineKeyboardDoubleArrowLeft, MdOutlineKeyboardDoubleArrowRight } from "react-icons/md";
+import { downloadBook } from '@/lib/downloadBook';
 
 
 
@@ -157,8 +158,8 @@ const Dashboard = () => {
                     <div className='flex flex-col w-[220px] h-[250px] lg:h-[320px] rounded-md items-center justify-center relative' key={book.id} >
                         <BookCard title={book.title} author={book.author} />
                         <div className='flex flex-row h-[40px] m-0 p-0 text-xl items-center justify-center absolute bottom-[0px] lg:bottom-[20px] left-[60%] transform translate-x-[-50%]'>
-                            <Link href={book.url} download={book.title} target='_blank' className='' aria-label={book.title}><FaDownload />
-                            </Link>
+                            <div onClick={() => downloadBook(book.id, token as string)} className='' aria-label={book.title}><FaDownload />
+                            </div>
                             {(user?.role !== "user") && <div className='flex flex-row items-center justify-center h-full gap-2.5 m-2.5'>
                                 <MdMode className='text-blue-700 hover:cursor-pointer' onClick={() => handleUpdate(book.id)} />
                                 <MdDeleteForever className='text-red-700 hover:cursor-pointer' onClick={() => handleDelete(book.id)} />
