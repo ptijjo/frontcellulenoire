@@ -35,14 +35,14 @@ export const login = createAsyncThunk("users/logging", async (token: string) => 
 });
 
 export const getAllUser = createAsyncThunk<any, { token: string; search: string; page: number; itemPerPage: number }>("users/getAll", async ({ token, search, page = 1, itemPerPage = 20 }) => {
-    const allBook = await axios.get(Url.userById, {
+    const allUser = await axios.get(Url.userById, {
         headers: {
             Authorization: `Bearer ${token}`
         },
         params: { search, page, itemPerPage }
     })
 
-    return allBook.data;
+    return allUser.data;
 });
 
 

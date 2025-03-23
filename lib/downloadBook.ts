@@ -13,7 +13,7 @@ export const downloadBook = async (bookId: string,token:string) => {
 
         // Récupérer le nom du fichier depuis les headers si possible
         const contentDisposition = response.headers["content-disposition"];
-        const filename = contentDisposition ? contentDisposition.split("filename=")[1] : "livre.pdf"; // Nom par défaut si non trouvé
+        const filename = contentDisposition ? contentDisposition.split("filename=")[1] : response.data.data.title; // Nom par défaut si non trouvé
 
         // Créer un lien pour télécharger le fichier
         const url = window.URL.createObjectURL(new Blob([response.data]));

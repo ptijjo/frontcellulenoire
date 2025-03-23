@@ -20,7 +20,7 @@ const Userid = ({ params }: { params: { id: string } }) => {
     const connected = Selector(selectUser);
 
     const navigate = useRouter();
-  
+
 
 
     //Vérification du token pour vérifier l'autorisation d'afficher les livres
@@ -110,6 +110,8 @@ const Userid = ({ params }: { params: { id: string } }) => {
                 <select id='role' className='w-[40%] mx-auto mb-3.5' value={role} onChange={(e) => setRole(e.target.value)}>
                     <option value="modo">Modo</option>
                     <option value="user">User</option>
+                    <option value="new">New User</option>
+
                 </select>
                 <div className='flex flex-row items-center justify-center w-full gap-3.5'>
                     <button className='bg-red-500 text-white p-2.5 rounded mt-5 w-[40%]' onClick={(e) => handleCancel(e)}>annuler</button>
