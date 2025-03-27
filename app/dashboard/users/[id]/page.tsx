@@ -1,6 +1,6 @@
 "use client"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { User } from '@/lib/Interface/user.interface';
+import { User, Download } from '@/lib/Interface/user.interface';
 import Url from '@/lib/Url';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
@@ -9,6 +9,8 @@ import { Label } from '@/components/ui/label';
 import { useRouter } from 'next/navigation';
 import { Selector } from '@/lib/hooks';
 import { selectUser } from '@/lib/features/users/userSlice';
+import dayjs from "dayjs";
+import ConvertisseurNom from '@/lib/ConvertisseurNom';
 
 
 const Userid = ({ params }: { params: { id: string } }) => {
@@ -80,6 +82,7 @@ const Userid = ({ params }: { params: { id: string } }) => {
         }
     };
 
+    console.log(user)
 
     if (user) return (
         <div className='flex flex-col items-center justify-center w-full relative top-[-50%] transform translate-y-1/2'>
@@ -104,6 +107,15 @@ const Userid = ({ params }: { params: { id: string } }) => {
                     </div>
                 </CardFooter>
             </Card >
+            <div>
+                {user?.downloaded.map((downloadBook: Download) => (
+                    <ul key={downloadBook.id}>
+                        <li>
+                            <ConvertisseurNom id={downloadBook.bookId} token={token as string} />  - {dayjs(downloadBook.createdAt).format("DD/MM/YYYY HH:mm:ss")}
+                        </li>
+                    </ul>
+                ))}
+            </div>
             <form className={(open) ? 'flex flex-col items-center justify-center w-[40%]' : "hidden"}>
 
                 <Label htmlFor='role' className='flex justify-center mt-3.5'>Choisir le genre : </Label>

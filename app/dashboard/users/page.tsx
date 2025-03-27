@@ -15,7 +15,7 @@ const Users = () => {
     const [page, setPage] = useState<number>(1);
     const [itemPerPage, setItemPerPage] = useState<number>(20);
     const [users, setUsers] = useState<User[] | []>([]);
-   
+
     //Vérification du token pour vérifier l'autorisation d'afficher les livres
     useEffect(() => {
         if (typeof window !== "undefined") {
@@ -56,8 +56,8 @@ const Users = () => {
 
         if (page == 1) setPage(1)
     };
-    
- 
+
+
     return (
         <>
             {/* Affichagede la barre de recherche */}
@@ -67,9 +67,9 @@ const Users = () => {
 
             {(users?.length === 0) && <div className='mt-[20px]'>Aucun utilisateur ! </div>}
 
-            <div className='flex flex-row flex-wrap w-full gap-3.5 lg:p-2.5 items-center justify-center'>
+            <div className='flex flex-row flex-wrap w-full gap-3.5 lg:p-2.5 items-center justify-between border'>
                 {users?.map((user: User) => (
-                    <Link href={`/dashboard/users/${user.id}`} className='flex- flex-col items-center w-[164px] mb-2.5 lg:w-[18%] lg:h-[200px]' key={user.id}>
+                    <Link href={`/dashboard/users/${user.id}`} className='flex- flex-col items-center w-[164px] lg:w-[18%] lg:h-[280px]' key={user.id}>
                         <Card className='flex flex-col  items-center w-full h-[280px] hover:scale-[105%] shadow-lg gap-3.5 text-ellipsis overflow-hidden transition-all'>
                             <CardHeader className='flex flex-col w-full p-0'>
                                 <CardTitle className=' flex flex-col w-full'>

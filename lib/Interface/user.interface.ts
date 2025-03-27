@@ -4,4 +4,15 @@ export interface User{
     pseudo: string;
     avatar: string;
     role: string;
+    download: number;
+    downloaded: Download[];
+
+}
+
+
+export interface Download{
+    id: string;
+    userId: string;
+    bookId: string;
+    createdAt: string;
 }
