@@ -107,15 +107,6 @@ const Userid = ({ params }: { params: { id: string } }) => {
                     </div>
                 </CardFooter>
             </Card >
-            <div>
-                {user?.downloaded.map((downloadBook: Download) => (
-                    <ul key={downloadBook.id}>
-                        <li>
-                            <ConvertisseurNom id={downloadBook.bookId} token={token as string} />  - {dayjs(downloadBook.createdAt).format("DD/MM/YYYY HH:mm:ss")}
-                        </li>
-                    </ul>
-                ))}
-            </div>
             <form className={(open) ? 'flex flex-col items-center justify-center w-[40%]' : "hidden"}>
 
                 <Label htmlFor='role' className='flex justify-center mt-3.5'>Choisir le genre : </Label>
@@ -130,6 +121,15 @@ const Userid = ({ params }: { params: { id: string } }) => {
                     <button className='bg-blue-500 text-white p-2.5 rounded mt-5 w-[40%]' onClick={(e) => handleSubmit(e)}>Valider</button>
                 </div>
             </form >
+            <div>
+                {user?.downloaded.map((downloadBook: Download) => (
+                    <ul key={downloadBook.id}>
+                        <li>
+                            <ConvertisseurNom id={downloadBook.bookId} token={token as string} />  - {dayjs(downloadBook.createdAt).format("DD/MM/YYYY HH:mm:ss")}
+                        </li>
+                    </ul>
+                ))}
+            </div>
         </div >
     );
 }

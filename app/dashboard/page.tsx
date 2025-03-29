@@ -13,6 +13,8 @@ import Loading from './loading';
 import BookCard from './components/BookCard';
 import { MdOutlineKeyboardDoubleArrowLeft, MdOutlineKeyboardDoubleArrowRight } from "react-icons/md";
 import { downloadBook } from '@/lib/downloadBook';
+import { User } from '@/lib/Interface/user.interface';
+import { ToastContainer, toast } from 'react-toastify';
 
 
 
@@ -20,7 +22,7 @@ import { downloadBook } from '@/lib/downloadBook';
 
 const Dashboard = () => {
     const [token, setToken] = useState<string | null>(null);
-    const user = Selector(selectUser);
+    const user: User = Selector(selectUser);
     const books: Book[] = Selector(selectBook);
     const nbBooks: number = Selector(selectNbBook);
     const statusBook: string = Selector(selectBokkStatus);
@@ -52,6 +54,12 @@ const Dashboard = () => {
         };
 
     }, [token, search, filtre, page, dispatch, itemPerPage]);
+
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
 
 
     const handleDelete = (id: string) => {
@@ -93,19 +101,29 @@ const Dashboard = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
+    const handleDownload = (bookId: string, token: string) => {
+        if (user?.role === "new" && user?.download >= 1) {
+            toast.info("Vous ne pouvez pas télécharger plus d'un livre");
+        } else {
+            downloadBook(bookId, token);
+        }
 
+    };
 
     return (
         <>
             <h1 className='text-2xl font-bold text-gray-700'>Bibliothèque cellule noire</h1>
             {/* Affichagede la barre de recherche */}
-            <div className='flex flex-row items-center justify-center w-[80%] lg:w-[60%]'>
-                <Input type='search' placeholder="Recherche ouvrage" className='w-[80%] lg:w-[60%] rounded' value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Search" />
+            <div className='flex flex-col items-center justify-center w-[80%] lg:w-[60%]'>
+                <Input type='search' placeholder="Recherche ouvrage" className='w-[80%] lg:w-[60%] rounded mb-3.5' value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Search" />
+
+                {isClient && user?.role === "new" && user?.download === 0 && (<span className='text-xl font-semibold text-blue-700'> Vous ne pouvez télécharger qu'un seul livre</span>)}
+                {(isClient && user?.role === "new" && user?.download >= 1) && <span className='text-xl font-semibold text-red-700'> Vous ne pouvez plus télécharger de livres </span>}
             </div>
+
             {/* Barre de filtrage */}
             <div className='flex flex-row w-full text-[10px] lg:text-lg justify-center'>
                 <fieldset className='flex flex-col w-[90%] justify-center items-center'>
-
                     <div className='flex flex-row w-full flex-wrap justify-around items-center gap-1.5 px-1.5' >
                         <label className='flex items-center justify-center w-[%]'>
                             <input type="radio" id="" name="categorie" value="" defaultChecked={true} onChange={handleCategoryFiltre} className='' />
@@ -158,9 +176,9 @@ const Dashboard = () => {
                     <div className='flex flex-col w-[220px] h-[250px] lg:h-[320px] rounded-md items-center justify-center relative' key={book.id} >
                         <BookCard title={book.title} author={book.author} />
                         <div className='flex flex-row h-[40px] m-0 p-0 text-xl items-center justify-center absolute bottom-[0px] lg:bottom-[20px] left-[60%] transform translate-x-[-50%]'>
-                            <div onClick={() => downloadBook(book.id, token as string)} className='' aria-label={book.title}><FaDownload />
+                            <div onClick={() => handleDownload(book.id, token as string)} className='cursor-pointer hover:text-gray-700' aria-label={book.title}><FaDownload />
                             </div>
-                            {(user?.role !== "user" && user?.role!=="new") && <div className='flex flex-row items-center justify-center h-full gap-2.5 m-2.5'>
+                            {(user?.role !== "user" && user?.role !== "new") && <div className='flex flex-row items-center justify-center h-full gap-2.5 m-2.5'>
                                 <MdMode className='text-blue-700 hover:cursor-pointer' onClick={() => handleUpdate(book.id)} />
                                 <MdDeleteForever className='text-red-700 hover:cursor-pointer' onClick={() => handleDelete(book.id)} />
                             </div>}
@@ -176,8 +194,8 @@ const Dashboard = () => {
                 <p className={(nbBooks) ? 'border' : 'hidden'}>{getDisplayedBooksCount()} - {nbBooks}</p>
                 <p onClick={handleNext} className={(books.length === itemPerPage) ? 'cursor-pointer hover:text-gray-700' : "hidden"} >Suivant</p>
                 <MdOutlineKeyboardDoubleArrowRight onClick={handleEnd} className={(books.length === itemPerPage) ? 'cursor-pointer hover:text-gray-700 text-2xl' : "hidden"} />
-
             </div >
+            <ToastContainer autoClose={2000} />
         </>
     )
 };

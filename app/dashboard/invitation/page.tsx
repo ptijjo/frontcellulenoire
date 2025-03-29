@@ -57,10 +57,11 @@ const Invitation = () => {
 
     return (
         <>
+            <h1 className='text-2xl font-semibold item-center'>Inviter un nouveau lecteur</h1>
             <div className={(message !== null) ? 'flex flex-col justify-center items-center gap-y-1.5 w-[40%] text-center text-2xl flex-grow' : "hidden"}>
                 {message}
             </div>
-            <form onSubmit={handleSubmit(onSubmit)} className={(message === null) ? "flex flex-col gap-y-1.5 w-[80%] lg:w-[40%] m-auto" : "hidden"}>
+            <form onSubmit={handleSubmit(onSubmit)} className={(message === null) ? "flex flex-col gap-y-1.5 w-[80%] lg:w-[40%] mx-auto my-[50%] lg:my-[20%]" : "hidden"}>
                 <Input type="email" placeholder="e-mail" id="identifiant" autoComplete="off" className="rounded placeholder-red-400 pl-4" {...register("email", { required: true })} aria-label="Email" />
                 {errors.email && errors.email.type === "required" && <span className='text-red-700 text-center'>Email Obligatoire !</span>}
 

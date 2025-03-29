@@ -64,10 +64,11 @@ const Users = () => {
             <div className='flex flex-row items-center justify-center w-[80%] lg:w-[60%]'>
                 <Input type='search' placeholder="Recherche utilisateur" className='w-[80%] lg:w-[60%] rounded' value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Search" />
             </div>
+            <h1 className='text-2xl font-semibold items-center mb-3.5'>Utilisateurs</h1>
 
             {(users?.length === 0) && <div className='mt-[20px]'>Aucun utilisateur ! </div>}
 
-            <div className='flex flex-row flex-wrap w-full gap-3.5 lg:p-2.5 items-center justify-between border'>
+            <div className='flex flex-row flex-wrap w-full gap-3.5 lg:p-2.5 items-center justify-between p-3.5'>
                 {users?.map((user: User) => (
                     <Link href={`/dashboard/users/${user.id}`} className='flex- flex-col items-center w-[164px] lg:w-[18%] lg:h-[280px]' key={user.id}>
                         <Card className='flex flex-col  items-center w-full h-[280px] hover:scale-[105%] shadow-lg gap-3.5 text-ellipsis overflow-hidden transition-all'>
@@ -88,6 +89,9 @@ const Users = () => {
                             <CardFooter className='flex flex-row h-[40px] m-0 p-0 text-xl items-center justify-center'>
                                 <div className='flex flex-row items-center justify-center h-full gap-2.5 m-2.5'>
                                     {user.role}
+                                </div>
+                                <div>
+                                    {user.download}
                                 </div>
                             </CardFooter>
                         </Card >

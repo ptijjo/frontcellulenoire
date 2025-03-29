@@ -62,7 +62,7 @@ const FormBook = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-1.5 w-4/5 m-auto">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-1.5 w-4/5 lg:w-1/2 mx-auto my-[10%]">
             <Label htmlFor='titre' className='text-center'>Tite du livre</Label>
             <Input type="text" placeholder="titre de l'ouvrage" id="titre" autoComplete="false" className="rounded-none placeholder-red-400 pl-4 mb-3.5" {...register("title", { required: true })} aria-label="Title" />
             {errors.title && errors.title.type === "required" && <span>Title Obligatoire</span>}

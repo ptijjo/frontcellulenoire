@@ -50,6 +50,7 @@ const Profil = ({ params }: { params: { slug: string } }) => {
 
     return (
         <>
+            <h1 className='mb-12 items-center text-2xl font-medium'>Mon profil</h1>
             <div className='flex items-center gap-1.5'>
                 <div className='w-[80px] h-[80px] rounded-full relative'>
                     <Image src={user?.avatar} alt="avatar" fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" priority className='w-full h-full rounded-full' />
