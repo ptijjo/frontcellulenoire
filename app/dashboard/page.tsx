@@ -38,22 +38,14 @@ const Dashboard = () => {
         setPage(1);
     };
 
-    //Vérification du token pour vérifier l'autorisation d'afficher les livres
     useEffect(() => {
-        if (typeof window !== "undefined") {
-            const storedToken = localStorage.getItem("token");
-            setToken(storedToken);
-        }
-    }, [token]);
-
-    useEffect(() => {
-        if (token) {
+        
             (search !== "") && page == 1;
-            dispatch(getBooks({ token, search, filtre, page, itemPerPage }));
-            dispatch(totalBook(token));
-        };
+            dispatch(getBooks({search, filtre, page, itemPerPage }));
+            dispatch(totalBook());
+        
 
-    }, [token, search, filtre, page, dispatch, itemPerPage]);
+    }, [ search, filtre, page, dispatch, itemPerPage]);
 
     const [isClient, setIsClient] = useState(false);
 
@@ -101,11 +93,11 @@ const Dashboard = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    const handleDownload = (bookId: string, token: string) => {
+    const handleDownload = (bookId: string) => {
         if (user?.role === "new" && user?.download >= 1) {
             toast.info("Vous ne pouvez pas télécharger plus d'un livre");
         } else {
-            downloadBook(bookId, token);
+            downloadBook(bookId);
         }
 
     };
@@ -176,7 +168,7 @@ const Dashboard = () => {
                     <div className='flex flex-col w-[220px] h-[250px] lg:h-[320px] rounded-md items-center justify-center relative' key={book.id} >
                         <BookCard title={book.title} author={book.author} />
                         <div className='flex flex-row h-[40px] m-0 p-0 text-xl items-center justify-center absolute bottom-[0px] lg:bottom-[20px] left-[60%] transform translate-x-[-50%]'>
-                            <div onClick={() => handleDownload(book.id, token as string)} className='cursor-pointer hover:text-gray-700' aria-label={book.title}><FaDownload />
+                            <div onClick={() => handleDownload(book.id)} className='cursor-pointer hover:text-gray-700' aria-label={book.title}><FaDownload />
                             </div>
                             {(user?.role !== "user" && user?.role !== "new") && <div className='flex flex-row items-center justify-center h-full gap-2.5 m-2.5'>
                                 <MdMode className='text-blue-700 hover:cursor-pointer' onClick={() => handleUpdate(book.id)} />

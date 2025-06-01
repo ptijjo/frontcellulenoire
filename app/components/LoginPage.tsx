@@ -24,15 +24,17 @@ const LoginPage = () => {
     } = useForm<Inputs>();
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
         try {
-            const connectUser = await axios.post(Url.connection, data);
-            toast.success(`Bienvenue ${connectUser.data.data.pseudo}`);
-            localStorage.setItem("token", connectUser.data.token);
+            const connectUser = await axios.post(Url.connection, data, {
+                withCredentials: true,
+            });
+
+            toast.success(`${connectUser.data}`);
             setTimeout(() => {
                 navigate.push("/dashboard")
             }, 2000);
 
         } catch (error: any) {
-            toast.error(`${error.response.data.message}`)
+            toast.error(`Une erreur est survenue !`)
         }
 
     };

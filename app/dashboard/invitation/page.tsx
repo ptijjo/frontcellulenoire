@@ -15,7 +15,6 @@ type Inputs = {
 
 const Invitation = () => {
     const navigate = useRouter();
-    const [token, setToken] = useState<string | null>(null);
     const [message, setMessage] = useState<string | null>(null);
     const [erreur, setErreur] = useState<string | null>(null);
     const {
@@ -25,29 +24,18 @@ const Invitation = () => {
         formState: { errors },
     } = useForm<Inputs>();
 
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            const storedToken = localStorage.getItem("token");
-            setToken(storedToken);
-        }
-    }, [token]);
-
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
         try {
-            if (token) {
-                await axios.post(Url.userById, data, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
+            await axios.post(Url.userById, data, {
+                withCredentials: true,
+            });
 
-                setMessage(`Email envoyé à ${data.email}`);
+            setMessage(`Email envoyé à ${data.email}`);
 
-                setTimeout(() => {
-                    setMessage(null)
-                    navigate.push("/dashboard")
-                }, 3000);
-            }
+            setTimeout(() => {
+                setMessage(null)
+                navigate.push("/dashboard")
+            }, 3000);
         } catch (error: any) {
             console.error(`${error.response.data.message}`);
             setErreur(error.response.data.message);

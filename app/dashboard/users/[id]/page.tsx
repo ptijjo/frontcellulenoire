@@ -24,23 +24,11 @@ const Userid = ({ params }: { params: { id: string } }) => {
     const navigate = useRouter();
 
 
-
-    //Vérification du token pour vérifier l'autorisation d'afficher les livres
     useEffect(() => {
-        if (typeof window !== "undefined") {
-            const storedToken = localStorage.getItem("token");
-            setToken(storedToken);
-        }
-    }, [id]);
-
-    useEffect(() => {
-        if (token) {
-            const user = async (token: string, id: string): Promise<User> => {
-
+       
+            const user = async (id: string): Promise<User> => {
                 const response = await axios.get(Url.userById + "/" + id, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    },
+                    withCredentials: true,
                     params: { id }
                 })
                 setUser(response.data.data);
@@ -48,10 +36,10 @@ const Userid = ({ params }: { params: { id: string } }) => {
                 return response.data.data;
             };
 
-            user(token, id);
+            user(id);
 
-        }
-    }, [token, id]);
+        
+    }, [id]);
 
 
     const handleClick = () => {
@@ -71,9 +59,7 @@ const Userid = ({ params }: { params: { id: string } }) => {
             await axios.put(Url.updateRole + "/" + id, {
                 role: role
             }, {
-                headers: {
-                    Authorization: `Bearer ${token as string}`
-                }
+                withCredentials:true,
             });
             navigate.push("/dashboard/users");
         } catch (error: any) {

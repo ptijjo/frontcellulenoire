@@ -8,22 +8,20 @@ interface idCategory {
     token: string;
 }
 
-const ConvertisseurID: React.FC<idCategory> = ({ id, token }) => {
+const ConvertisseurID: React.FC<idCategory> = ({ id }) => {
 
     const [nom, setNom] = useState("");
 
     useEffect(() => {
 
-        if (token) axios.get(`${Url.getCategory}/${id}`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
+        axios.get(`${Url.getCategory}/${id}`, {
+           withCredentials:true,
         }).then(response => {
             setNom(response.data.data.type);
         })
             .catch(error => console.log(error))
 
-    }, [id, token]);
+    }, [id]);
 
     return (
         <>
@@ -34,9 +32,7 @@ const ConvertisseurID: React.FC<idCategory> = ({ id, token }) => {
 
 export const fonctionConvertisseur = async (id: string, token: string): Promise<string> => {
     const catgeorie = await axios.get(`${Url.getCategory}/${id}`, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
+        withCredentials: true,
     });
 
     return catgeorie.data.data.type;

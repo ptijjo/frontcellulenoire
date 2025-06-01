@@ -28,30 +28,25 @@ const UpdateBook = ({ params }: { params: { id: string } }) => {
   }, []);
 
   useEffect(() => {
-    if (token) {
-      const getUpdateBook = async (id: string, token: string) => {
-        try {
-          const getBook = await axios.get(`${Url.getBooks}/${id}`, {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          });
-          setBook(getBook.data.data);
-          setTitle(getBook.data.data.title);
-          setAuthor(getBook.data.data.author);
-          const convertion = await fonctionConvertisseur(getBook.data.data.categoryId, token);
-          setCategory(convertion);
-        } catch (error) {
-          console.log(error)
-        }
-      };
 
-      getUpdateBook(id, token)
+    const getUpdateBook = async (id: string) => {
+      try {
+        const getBook = await axios.get(`${Url.getBooks}/${id}`, {
+          withCredentials: true,
+        });
+        setBook(getBook.data.data);
+        setTitle(getBook.data.data.title);
+        setAuthor(getBook.data.data.author);
+        const convertion = await fonctionConvertisseur(getBook.data.data.categoryId, token);
+        setCategory(convertion);
+      } catch (error) {
+        console.log(error)
+      }
     };
+    getUpdateBook(id)
+  }, [id]);
 
-  }, [token, id]);
 
- 
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
 
@@ -62,9 +57,7 @@ const UpdateBook = ({ params }: { params: { id: string } }) => {
         author: author,
         categorie: category,
       }, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+        withCredentials: true,
       });
 
       navigate.push("/dashboard")

@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import ConvertisseurID from '@/lib/ConvertisseurID';
 import { deleteBook } from '@/lib/features/books/bookSlice';
-import { Dispatch} from '@/lib/hooks';
+import { Dispatch } from '@/lib/hooks';
 import { Book } from '@/lib/Interface/book.interface';
 import Url from '@/lib/Url';
 import axios from 'axios';
@@ -18,7 +18,7 @@ const DeleteBook = ({ params }: { params: { id: string } }) => {
   const id = params.id as string;
   const navigate = useRouter();
   const dispatch = Dispatch();
-  
+
 
   //Vérification du token pour vérifier l'autorisation d'afficher les livres
   useEffect(() => {
@@ -29,34 +29,29 @@ const DeleteBook = ({ params }: { params: { id: string } }) => {
   }, []);
 
   useEffect(() => {
-    if (token) {
-      const getUpdateBook = async (id: string, token: string) => {
-        try {
-          const getBook = await axios.get(`${Url.getBooks}/${id}`, {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          });
-          setBook(getBook.data.data);
-        } catch (error) {
-          console.log(error)
-        }
-      };
-
-      getUpdateBook(id, token)
+    const getUpdateBook = async (id: string) => {
+      try {
+        const getBook = await axios.get(`${Url.getBooks}/${id}`, {
+          withCredentials: true,
+        });
+        setBook(getBook.data.data);
+      } catch (error) {
+        console.log(error)
+      }
     };
 
-  }, [token, id]);
+    getUpdateBook(id)
+
+  }, [id]);
 
   const handleCancel = () => {
     navigate.back();
   };
 
   const handleConfirm = () => {
-    if (token) {
-      dispatch(deleteBook({ id, token }));
-      navigate.push("/dashboard");
-    }
+
+    dispatch(deleteBook({ id }));
+    navigate.push("/dashboard");
 
   };
 

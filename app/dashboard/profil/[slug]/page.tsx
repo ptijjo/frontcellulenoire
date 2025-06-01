@@ -21,13 +21,7 @@ const Profil = ({ params }: { params: { slug: string } }) => {
     const statusUser = Selector(selectUserStatus);
     const statusUserError = Selector(selectUserError);
 
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            const storedToken = localStorage.getItem("token");
-            setToken(storedToken);
-        }
-    }, [params.slug]);
-
+ 
     const handleOpen = () => {
         setOpen(!open);
         if (!open && user) {
@@ -39,7 +33,7 @@ const Profil = ({ params }: { params: { slug: string } }) => {
         e.preventDefault();
         try {
             if (token) {
-                dispatch(updatePseudo({ id: params.slug, token, data: pseudo }));
+                dispatch(updatePseudo({ id: params.slug, data: pseudo }));
                 (statusUser !== "success" && statusUser !== "loading" && statusUserError) ? setOpen(true) : setOpen(false);
             }
 

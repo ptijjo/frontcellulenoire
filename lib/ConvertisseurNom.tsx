@@ -10,20 +10,18 @@ interface idBook {
 
 const ConvertisseurNom: React.FC<idBook> = ({ id, token }) => {
 
-    const [nom, setNom] = useState("");
+    const [nom, setNom] = useState<string>("");
 
     useEffect(() => {
 
-        if (token) axios.get(`${Url.getBooks}/${id}`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
+        axios.get(`${Url.getBooks}/${id}`, {
+            withCredentials: true,
         }).then(response => {
             setNom(response.data.data.title);
         })
             .catch(error => console.log(error))
 
-    }, [id, token]);
+    }, [id]);
 
     return (
         <>

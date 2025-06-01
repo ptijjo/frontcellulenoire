@@ -2,20 +2,16 @@ import axios from "axios";
 import Url from "./Url";
 
 
-export const downloadBook = async (bookId: string,token:string) => {
+export const downloadBook = async (bookId: string) => {
     try {
 
         const response = await axios.get(`${Url.downloadBook}/${bookId}`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            },
+            withCredentials:true,
             responseType:'blob' //Convertir la réponse en Blob(fichier binaire) au lieu de json
         });
 
         const livre = await axios.get(`${Url.getBooks}/${bookId}`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
+            withCredentials:true,
         });
 
         // Récupérer le nom du fichier depuis les headers si possible

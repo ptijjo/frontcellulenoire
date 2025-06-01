@@ -8,11 +8,12 @@ import {
     MenubarTrigger,
 } from "@/components/ui/menubar";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Dispatch } from '@/lib/hooks';
-import { logout } from '@/lib/features/users/userSlice';
+import { Dispatch, Selector } from '@/lib/hooks';
+// import { logout } from '@/lib/features/users/userSlice';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { FaShield } from "react-icons/fa6";
+import { logout } from '@/lib/features/users/userSlice';
 
 
 interface HeaderProps {
@@ -26,8 +27,11 @@ const MenuHeader: React.FC<HeaderProps> = ({ pseudo, id, avatar, role }) => {
     const dispatch = Dispatch();
     const router = useRouter();
 
+    let errorLogin = Selector(state => state.user.error);
+
     const HandleDeconnection = () => {
         dispatch(logout());
+        console.log(errorLogin)
         router.push("/");
 
     };
@@ -55,15 +59,15 @@ const MenuHeader: React.FC<HeaderProps> = ({ pseudo, id, avatar, role }) => {
                         <button className='hover:bg-blue-500 rounded px-2.5 text-black' onClick={() => HandleProfil(id)}>Profil</button>
                     </MenubarItem>
 
-                    <MenubarItem className={(role !== "user" && role!=="new" ? "flex flex-col justify-center items-center w-1/2 relative left-12" : "hidden")}>
+                    <MenubarItem className={(role !== "user" && role !== "new" ? "flex flex-col justify-center items-center w-1/2 relative left-12" : "hidden")}>
                         <Link href="/dashboard/invitation" className="hover:bg-blue-500 rounded px-2.5 text-black"><p className='text-black'>Invitation</p></Link>
                     </MenubarItem>
 
-                    <MenubarItem className={(role !== "user" && role!=="new" ? "flex flex-col justify-center items-center w-1/2 relative left-12" : "hidden")}>
+                    <MenubarItem className={(role !== "user" && role !== "new" ? "flex flex-col justify-center items-center w-1/2 relative left-12" : "hidden")}>
                         <Link href="/dashboard/users" className="hover:bg-blue-500 rounded px-2.5 text-black"><p className='text-black'>Utilisateurs</p></Link>
                     </MenubarItem>
 
-                    <MenubarItem className={(role !== "user" && role!=="new" ? "flex flex-col justify-center items-center w-1/2 relative left-12 " : "hidden")}>
+                    <MenubarItem className={(role !== "user" && role !== "new" ? "flex flex-col justify-center items-center w-1/2 relative left-12 " : "hidden")}>
                         <Link href="/dashboard/ajout" className="hover:bg-blue-500 rounded"><p className='text-black'>Ajout livre</p></Link>
                     </MenubarItem>
 

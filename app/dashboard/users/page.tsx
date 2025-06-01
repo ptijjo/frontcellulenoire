@@ -29,9 +29,7 @@ const Users = () => {
             const allUser = async (token: string, search: string, page: number, itemPerpage: number): Promise<Book[]> => {
 
                 const response = await axios.get(Url.userById, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    },
+                    withCredentials: true,
                     params: { search, page, itemPerPage }
                 })
                 setUsers(response.data.data);

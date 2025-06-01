@@ -24,43 +24,42 @@ const initialState: userState = {
     error: null,
 };
 
-export const login = createAsyncThunk("users/logging", async (token: string) => {
+export const login = createAsyncThunk("users/logging", async ():Promise<User> => {
            
     const response = await axios.get(Url.decodage, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
+        withCredentials:true,
     });
     return response.data
 });
 
-export const getAllUser = createAsyncThunk<any, { token: string; search: string; page: number; itemPerPage: number }>("users/getAll", async ({ token, search, page = 1, itemPerPage = 20 }) => {
+export const getAllUser = createAsyncThunk<any, { search: string; page: number; itemPerPage: number }>("users/getAll", async ({search, page = 1, itemPerPage = 20 }) => {
     const allUser = await axios.get(Url.userById, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        },
+        withCredentials:true,
         params: { search, page, itemPerPage }
     })
 
     return allUser.data;
 });
 
+export const logout = createAsyncThunk("user/logout", async (): Promise<void> => {
+    
+    await axios.get(Url.logout, { withCredentials: true });
+});
 
 
-export const updatePseudo = createAsyncThunk<any, { id: string; token: string, data:string }>("users/updatePseudo", async ({ id, token, data }) => {
+
+export const updatePseudo = createAsyncThunk<any, { id: string; data:string }>("users/updatePseudo", async ({ id, data }) => {
     const response = await axios.put(`${Url.userById}/${id}`, {
       pseudo:data,  
     }, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
+        withCredentials:true,
     });
 
     return(response.data.data.pseudo);
     
 });
 
-export const updateRole = createAsyncThunk<any, { id: string, token: string, data: string }>("users/updateRole", async ({ id, token, data }) => { 
+export const updateRole = createAsyncThunk<any, { id: string; data: string }>("users/updateRole", async ({ id, data }) => { 
 
     if (data !== "admin" && data !== "modo" && data !== "user") {
         return "user";
@@ -69,9 +68,7 @@ export const updateRole = createAsyncThunk<any, { id: string, token: string, dat
     const response = await axios.put(`${Url.userById}/${id}`, {
         role: data
     }, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
+        withCredentials:true,
     });
 
     return response.data.data.role;
@@ -80,11 +77,7 @@ export const updateRole = createAsyncThunk<any, { id: string, token: string, dat
 export const userSlice = createSlice({
     name: "user",
     initialState,
-    reducers: {
-        logout: () => {
-            localStorage.removeItem("token");
-        }
-    },
+    reducers: { },
     extraReducers: builder => {
         builder
             //Utilisateur connecté
@@ -135,6 +128,19 @@ export const userSlice = createSlice({
             state.status = 'failed';
             state.error = action.error.message as string;
         })
+
+        //Déconnection
+           .addCase(logout.pending, (state) => {
+            state.status = "loading";
+        })
+        .addCase(logout.fulfilled, (state, action) => {
+            state.status = "success";
+            state.user = null;
+        })
+        .addCase(logout.rejected, (state, action) => {
+            state.status = 'failed';
+            state.error = action.error.message as string;
+        })
     },
 
 });
@@ -142,7 +148,7 @@ export const userSlice = createSlice({
 export const selectUser = (state: any) => state.user.user;
 export const selectUserStatus = (state: any) => state.user.status;
 export const selectUserError = (state: any) => state.user.error;
-export const { logout } = userSlice.actions;
+// export const { logout } = userSlice.actions;
 
 
 export default userSlice.reducer;

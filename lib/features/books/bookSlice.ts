@@ -17,30 +17,24 @@ const initialState: bookState = {
     total:0,
 };
 
-export const getBooks = createAsyncThunk < any, { token: string; search: string; filtre: string; page: number; itemPerPage?:number}> ("books/getBooks", async ({ token, search, filtre, page=1,itemPerPage=20 }) => {
+export const getBooks = createAsyncThunk < any, { search: string; filtre: string; page: number; itemPerPage?:number}> ("books/getBooks", async ({ search, filtre, page=1,itemPerPage=20 }) => {
     const response = await axios.get(Url.getBooks, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        },
+       withCredentials:true,
         params:{search,filtre,page,itemPerPage}
     });
     return response.data;
 });
 
-export const deleteBook = createAsyncThunk<any, { id: string; token: string }>("books/deleteBook", async ({ id, token }) => {
+export const deleteBook = createAsyncThunk<any, { id: string; }>("books/deleteBook", async ({ id }) => {
     const response = await axios.delete(`${Url.getBooks}/${id}`, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
+        withCredentials:true,
     });
     return response.data;
 });
 
-export const totalBook = createAsyncThunk("books/nbBook", async (token:string) => {
+export const totalBook = createAsyncThunk("books/nbBook", async () => {
         const totalLivre = await axios.get(Url.nbBooks, {
-             headers: {
-                 Authorization: `Bearer ${token as string}`
-             }
+             withCredentials:true,
          });
     return (totalLivre.data);
 })
