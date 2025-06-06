@@ -6,7 +6,7 @@ import { Selector } from '@/lib/hooks'
 import Url from '@/lib/Url'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { toast, ToastContainer } from 'react-toastify'
 
@@ -22,20 +22,11 @@ const FormBook = () => {
     const {
         register,
         handleSubmit,
-        watch,
         formState: { errors },
     } = useForm<Inputs>();
 
-    const [token, setToken] = useState<string | null>(null);
+    // State to manage the error message
     const errorLogin = Selector(state => state.user.error);
-
-    //Vérification du token pour vérifier l'autorisation d'afficher les livres
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            const storedToken = localStorage.getItem("token");
-            setToken(storedToken);
-        };
-    }, [token]);
 
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
         try {
@@ -50,9 +41,7 @@ const FormBook = () => {
             formData.append("author", data.author);
 
             await axios.post(Url.addBooks, formData, {
-                headers: {
-                    Authorization: `Bearer ${token as string}`
-                }
+                withCredentials: true,
             });
             navigate.push("/dashboard");
         } catch (error: any) {

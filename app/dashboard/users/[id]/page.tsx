@@ -15,7 +15,6 @@ import ConvertisseurNom from '@/lib/ConvertisseurNom';
 
 const Userid = ({ params }: { params: { id: string } }) => {
     const id = params.id as string;
-    const [token, setToken] = useState<string | null>(null);
     const [user, setUser] = useState<User | null>(null);
     const [open, setOpen] = useState<boolean>(false);
     const [role, setRole] = useState<string>("");
@@ -25,20 +24,20 @@ const Userid = ({ params }: { params: { id: string } }) => {
 
 
     useEffect(() => {
-       
-            const user = async (id: string): Promise<User> => {
-                const response = await axios.get(Url.userById + "/" + id, {
-                    withCredentials: true,
-                    params: { id }
-                })
-                setUser(response.data.data);
-                setRole(response.data.data.role);
-                return response.data.data;
-            };
 
-            user(id);
+        const user = async (id: string): Promise<User> => {
+            const response = await axios.get(Url.userById + "/" + id, {
+                withCredentials: true,
+                params: { id }
+            })
+            setUser(response.data.data);
+            setRole(response.data.data.role);
+            return response.data.data;
+        };
 
-        
+        user(id);
+
+
     }, [id]);
 
 
@@ -59,7 +58,7 @@ const Userid = ({ params }: { params: { id: string } }) => {
             await axios.put(Url.updateRole + "/" + id, {
                 role: role
             }, {
-                withCredentials:true,
+                withCredentials: true,
             });
             navigate.push("/dashboard/users");
         } catch (error: any) {
@@ -111,7 +110,7 @@ const Userid = ({ params }: { params: { id: string } }) => {
                 {user?.downloaded.map((downloadBook: Download) => (
                     <ul key={downloadBook.id}>
                         <li>
-                            <ConvertisseurNom id={downloadBook.bookId} token={token as string} />  - {dayjs(downloadBook.createdAt).format("DD/MM/YYYY HH:mm:ss")}
+                            <ConvertisseurNom id={downloadBook.bookId} />  - {dayjs(downloadBook.createdAt).format("DD/MM/YYYY HH:mm:ss")}
                         </li>
                     </ul>
                 ))}

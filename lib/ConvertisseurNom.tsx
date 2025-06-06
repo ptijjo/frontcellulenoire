@@ -5,10 +5,9 @@ import Url from './Url';
 
 interface idBook {
     id: string;
-    token: string;
 }
 
-const ConvertisseurNom: React.FC<idBook> = ({ id, token }) => {
+const ConvertisseurNom: React.FC<idBook> = ({ id }) => {
 
     const [nom, setNom] = useState<string>("");
 

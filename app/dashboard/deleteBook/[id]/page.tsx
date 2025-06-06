@@ -14,19 +14,10 @@ import React, { useEffect, useState } from 'react'
 const DeleteBook = ({ params }: { params: { id: string } }) => {
 
   const [book, setBook] = useState<Book | null>(null)
-  const [token, setToken] = useState<string | null>(null);
   const id = params.id as string;
   const navigate = useRouter();
   const dispatch = Dispatch();
 
-
-  //Vérification du token pour vérifier l'autorisation d'afficher les livres
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedToken = localStorage.getItem("token");
-      setToken(storedToken);
-    }
-  }, []);
 
   useEffect(() => {
     const getUpdateBook = async (id: string) => {
@@ -67,7 +58,7 @@ const DeleteBook = ({ params }: { params: { id: string } }) => {
           </CardTitle>
           <CardDescription className='text-center'>
             <span>{book?.author}</span><br />
-            <span>Catégorie :  <ConvertisseurID id={book?.categoryId as string} token={token as string} /></span>
+            <span>Catégorie :  <ConvertisseurID id={book?.categoryId as string} /></span>
           </CardDescription>
         </CardHeader>
       </Card >

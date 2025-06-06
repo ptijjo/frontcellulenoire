@@ -10,36 +10,27 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 const Users = () => {
-    const [token, setToken] = useState<string | null>(null);
     const [search, setSearch] = useState<string>("");
     const [page, setPage] = useState<number>(1);
     const [itemPerPage, setItemPerPage] = useState<number>(20);
     const [users, setUsers] = useState<User[] | []>([]);
 
-    //Vérification du token pour vérifier l'autorisation d'afficher les livres
     useEffect(() => {
-        if (typeof window !== "undefined") {
-            const storedToken = localStorage.getItem("token");
-            setToken(storedToken);
+
+        const allUser = async (search: string, page: number, itemPerpage: number): Promise<Book[]> => {
+
+            const response = await axios.get(Url.userById, {
+                withCredentials: true,
+                params: { search, page, itemPerPage }
+            })
+            setUsers(response.data.data);
+            return response.data.data;
         }
-    }, [token]);
 
-    useEffect(() => {
-        if (token) {
-            const allUser = async (token: string, search: string, page: number, itemPerpage: number): Promise<Book[]> => {
+        allUser(search, page, itemPerPage);
 
-                const response = await axios.get(Url.userById, {
-                    withCredentials: true,
-                    params: { search, page, itemPerPage }
-                })
-                setUsers(response.data.data);
-                return response.data.data;
-            };
 
-            allUser(token, search, page, itemPerPage);
-        };
-
-    }, [token, search, page]);
+    }, [search, page]);
 
     const handleNext = () => {
         setPage(page + 1);

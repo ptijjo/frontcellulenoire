@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { FaShield } from "react-icons/fa6";
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -14,14 +14,13 @@ import Image from 'next/image';
 const Profil = ({ params }: { params: { slug: string } }) => {
 
     const user = Selector(selectUser);
-    const [token, setToken] = useState<string | null>(null);
     const [open, setOpen] = useState<boolean>(false);
     const [pseudo, setPseudo] = useState<string>("");
     const dispatch = Dispatch();
     const statusUser = Selector(selectUserStatus);
     const statusUserError = Selector(selectUserError);
 
- 
+
     const handleOpen = () => {
         setOpen(!open);
         if (!open && user) {
@@ -32,11 +31,8 @@ const Profil = ({ params }: { params: { slug: string } }) => {
     const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
         try {
-            if (token) {
-                dispatch(updatePseudo({ id: params.slug, data: pseudo }));
-                (statusUser !== "success" && statusUser !== "loading" && statusUserError) ? setOpen(true) : setOpen(false);
-            }
-
+            dispatch(updatePseudo({ id: params.slug, data: pseudo }));
+            (statusUser !== "success" && statusUser !== "loading" && statusUserError) ? setOpen(true) : setOpen(false);
         } catch (error) {
             console.error(error);
         }

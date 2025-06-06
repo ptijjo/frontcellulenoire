@@ -5,7 +5,6 @@ import Url from './Url';
 
 interface idCategory {
     id: string;
-    token: string;
 }
 
 const ConvertisseurID: React.FC<idCategory> = ({ id }) => {
@@ -30,7 +29,7 @@ const ConvertisseurID: React.FC<idCategory> = ({ id }) => {
     )
 };
 
-export const fonctionConvertisseur = async (id: string, token: string): Promise<string> => {
+export const fonctionConvertisseur = async (id: string): Promise<string> => {
     const catgeorie = await axios.get(`${Url.getCategory}/${id}`, {
         withCredentials: true,
     });

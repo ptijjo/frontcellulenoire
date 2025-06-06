@@ -12,20 +12,11 @@ import React, { useEffect, useState } from 'react'
 
 const UpdateBook = ({ params }: { params: { id: string } }) => {
   const [book, setBook] = useState<Book | null>(null)
-  const [token, setToken] = useState<string>("");
   const [title, setTitle] = useState<string>("");
   const [author, setAuthor] = useState<string>("");
   const [category, setCategory] = useState<string>("");
   const id = params.id as string;
   const navigate = useRouter();
-
-  //Vérification du token pour vérifier l'autorisation d'afficher les livres
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedToken = localStorage.getItem("token");
-      setToken(storedToken as string);
-    }
-  }, []);
 
   useEffect(() => {
 
@@ -37,7 +28,7 @@ const UpdateBook = ({ params }: { params: { id: string } }) => {
         setBook(getBook.data.data);
         setTitle(getBook.data.data.title);
         setAuthor(getBook.data.data.author);
-        const convertion = await fonctionConvertisseur(getBook.data.data.categoryId, token);
+        const convertion = await fonctionConvertisseur(getBook.data.data.categoryId);
         setCategory(convertion);
       } catch (error) {
         console.log(error)
@@ -52,7 +43,7 @@ const UpdateBook = ({ params }: { params: { id: string } }) => {
 
     try {
 
-      const updateBook = await axios.put(`${Url.getBooks}/${id}`, {
+      await axios.put(`${Url.getBooks}/${id}`, {
         title: title,
         author: author,
         categorie: category,
