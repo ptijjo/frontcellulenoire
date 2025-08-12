@@ -15,13 +15,13 @@ import { MdOutlineKeyboardDoubleArrowLeft, MdOutlineKeyboardDoubleArrowRight } f
 import { downloadBook } from '@/lib/downloadBook';
 import { User } from '@/lib/Interface/user.interface';
 import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 
 
 
 const Dashboard = () => {
-    const [token, setToken] = useState<string | null>(null);
     const user: User = Selector(selectUser);
     const books: Book[] = Selector(selectBook);
     const nbBooks: number = Selector(selectNbBook);
@@ -32,6 +32,7 @@ const Dashboard = () => {
     const [itemPerPage, setItemPerPage] = useState<number>(20);
     const navigate = useRouter();
     const dispatch = Dispatch();
+   
 
     const handleCategoryFiltre = (event: React.ChangeEvent<HTMLInputElement>) => {
         setFiltre(event.target.value);
@@ -39,20 +40,34 @@ const Dashboard = () => {
     };
 
     useEffect(() => {
-        
-            (search !== "") && page == 1;
-            dispatch(getBooks({search, filtre, page, itemPerPage }));
-            dispatch(totalBook());
-        
 
-    }, [ search, filtre, page, dispatch, itemPerPage]);
+        (search !== "") && page == 1;
+        dispatch(getBooks({ search, filtre, page, itemPerPage }));
+        dispatch(totalBook());
 
-    const [isClient, setIsClient] = useState(false);
+
+    }, [search, filtre, page, dispatch, itemPerPage]);
+
+    // const [isClient, setIsClient] = useState(false);
+
+    // useEffect(() => {
+    //     setIsClient(true);
+    // }, []);
+
 
     useEffect(() => {
-        setIsClient(true);
-    }, []);
+        if (!user) return; // attendre que user soit chargé
 
+        if (user.role === "new" && user.download === 0) {
+
+            toast.info("Vous ne pouvez télécharger qu'un livre par mois");
+        }
+
+        if (user.role === "new" && user.download >= 1) {
+
+            toast.info("Vous ne pouvez plus télécharger de livre ce mois-ci");
+        }
+    }, [user]);
 
     const handleDelete = (id: string) => {
         navigate.push("/dashboard/deleteBook/" + id)
@@ -94,11 +109,11 @@ const Dashboard = () => {
     };
 
     const handleDownload = (bookId: string) => {
-        if (user?.role === "new" && user?.download >= 1) {
-            toast.info("Vous ne pouvez pas télécharger plus d'un livre");
-        } else {
+        // if (user?.role === "new" && user?.download >= 1) {
+        //     toast.info("Vous ne pouvez plus télécharger de livre");
+        // } else {
             downloadBook(bookId);
-        }
+        // }
 
     };
 
@@ -109,8 +124,8 @@ const Dashboard = () => {
             <div className='flex flex-col items-center justify-center w-[80%] lg:w-[60%]'>
                 <Input type='search' placeholder="Recherche ouvrage" className='w-[80%] lg:w-[60%] rounded mb-3.5' value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Search" />
 
-                {isClient && user?.role === "new" && user?.download === 0 && (<span className='text-xl font-semibold text-blue-700'> Vous ne pouvez télécharger qu'un seul livre</span>)}
-                {(isClient && user?.role === "new" && user?.download >= 1) && <span className='text-xl font-semibold text-red-700'> Vous ne pouvez plus télécharger de livres </span>}
+                {/* {isClient && user?.role === "new" && user?.download === 0 && (<span className='text-xl font-semibold text-blue-700'> Vous ne pouvez télécharger qu'un seul livre</span>)}
+                {(isClient && user?.role === "new" && user?.download >= 1) && <span className='text-xl font-semibold text-red-700'> Vous ne pouvez plus télécharger de livres </span>} */}
             </div>
 
             {/* Barre de filtrage */}

@@ -1,5 +1,7 @@
 import axios from "axios";
 import Url from "./Url";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 export const downloadBook = async (bookId: string) => {
@@ -29,5 +31,6 @@ export const downloadBook = async (bookId: string) => {
         window.URL.revokeObjectURL(url);    
     } catch (error) {
         console.error("Erreur : ", error)
+        toast.error(`${error?.message}`)
     }
 }
