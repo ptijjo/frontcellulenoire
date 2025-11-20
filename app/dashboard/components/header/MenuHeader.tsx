@@ -42,9 +42,9 @@ const MenuHeader: React.FC<HeaderProps> = ({ pseudo, id, avatar, role }) => {
     }
 
     return (
-        <Menubar className="border-none text-black -mx-3 shadow-none">
+        <Menubar className=" flex items-center justify-center text-black shadow-none border-none">
             <MenubarMenu>
-                <MenubarTrigger className="text-lg gap-3 relative" value="bouton_menu" tabIndex={-1} aria-label="bouton_menu" id="bouton_menu" title="bouton_menu">
+                <MenubarTrigger className=" flex items-center justify-center text-lg gap-3 relative" value="bouton_menu" tabIndex={-1} aria-label="bouton_menu" id="bouton_menu" title="bouton_menu">
                     <Avatar className="cursor-pointer">
                         <AvatarImage src={avatar} alt="image de profil" className='' />
                         <AvatarFallback>avatar</AvatarFallback>

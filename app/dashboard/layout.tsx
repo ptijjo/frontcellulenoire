@@ -32,9 +32,9 @@ const layout = ({ children }: { children: React.ReactNode }) => {
 
 
     return (
-        <div className='flex flex-col items-center w-dvw max-w-7xl m-auto bg-white'>
+        <div className='flex flex-col items-center w-full max-w-7xl bg-white'>
             <Header pseudo={user?.pseudo} id={user?.id} avatar={user?.avatar} role={user?.role} />
-            <main className='flex flex-col w-full items-center gap-3.5 min-h-dvh'>
+            <main className='flex flex-col w-full items-center gap-3.5'>
                 {children}
             </main>
         </div>

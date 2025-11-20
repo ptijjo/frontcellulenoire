@@ -16,6 +16,7 @@ import { downloadBook } from '@/lib/downloadBook';
 import { User } from '@/lib/Interface/user.interface';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { fonctionConvertisseur } from '@/lib/ConvertisseurID';
 
 
 
@@ -30,9 +31,10 @@ const Dashboard = () => {
     const [filtre, setFiltre] = useState<string>("");
     const [page, setPage] = useState<number>(1);
     const [itemPerPage, setItemPerPage] = useState<number>(20);
+    const [categoryMap, setCategoryMap] = useState<Record<string, string>>({});
     const navigate = useRouter();
     const dispatch = Dispatch();
-   
+
 
     const handleCategoryFiltre = (event: React.ChangeEvent<HTMLInputElement>) => {
         setFiltre(event.target.value);
@@ -47,6 +49,32 @@ const Dashboard = () => {
 
 
     }, [search, filtre, page, dispatch, itemPerPage]);
+
+    // Charger les noms de catégories pour chaque livre
+    useEffect(() => {
+        const loadCategories = async () => {
+            const newCategoryMap: Record<string, string> = {};
+
+            for (const book of books) {
+                if (book.categoryId && !categoryMap[book.categoryId]) {
+                    try {
+                        const categoryName = await fonctionConvertisseur(book.categoryId);
+                        newCategoryMap[book.categoryId] = categoryName;
+                    } catch (error) {
+                        console.error('Erreur lors du chargement de la catégorie:', error);
+                    }
+                }
+            }
+
+            if (Object.keys(newCategoryMap).length > 0) {
+                setCategoryMap(prev => ({ ...prev, ...newCategoryMap }));
+            }
+        };
+
+        if (books && books.length > 0) {
+            loadCategories();
+        }
+    }, [books]);
 
     // const [isClient, setIsClient] = useState(false);
 
@@ -112,7 +140,7 @@ const Dashboard = () => {
         // if (user?.role === "new" && user?.download >= 1) {
         //     toast.info("Vous ne pouvez plus télécharger de livre");
         // } else {
-            downloadBook(bookId);
+        downloadBook(bookId);
         // }
 
     };
@@ -181,7 +209,7 @@ const Dashboard = () => {
                 {books?.map((book: Book) => (
 
                     <div className='flex flex-col w-[220px] h-[250px] lg:h-[320px] rounded-md items-center justify-center relative' key={book.id} >
-                        <BookCard title={book.title} author={book.author} />
+                        <BookCard title={book.title} author={book.author} category={categoryMap[book.categoryId]} />
                         <div className='flex flex-row h-[40px] m-0 p-0 text-xl items-center justify-center absolute bottom-[0px] lg:bottom-[20px] left-[60%] transform translate-x-[-50%]'>
                             <div onClick={() => handleDownload(book.id)} className='cursor-pointer hover:text-gray-700' aria-label={book.title}><FaDownload />
                             </div>

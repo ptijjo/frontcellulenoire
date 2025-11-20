@@ -38,9 +38,15 @@ const Profil = ({ params }: { params: { slug: string } }) => {
         }
     };
 
+    const handleCancel = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        e.preventDefault()
+        setOpen(false)
+    };
+
+    console.log(open)
     return (
         <>
-            <h1 className='mb-12 items-center text-2xl font-medium'>Mon profil</h1>
+            <h1 className='m-12 items-center text-2xl font-medium'>Mon profil</h1>
             <div className='flex items-center gap-1.5'>
                 <div className='w-[80px] h-[80px] rounded-full relative'>
                     <Image src={user?.avatar} alt="avatar" fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" priority className='w-full h-full rounded-full' />
@@ -54,7 +60,10 @@ const Profil = ({ params }: { params: { slug: string } }) => {
                 <Label className='text-center'>Pseudo</Label>
                 <Input type='text' value={pseudo} onChange={(e) => setPseudo(e.target.value)} />
                 <p className={(statusUser === "failed") ? 'text-red-700' : "hidden"}>Pseudo déja existant !!</p>
-                <Button onClick={(e) => handleSubmit(e)} className='bg-blue-500 hover:bg-blue-400'>Valider</Button>
+                <div className='flex flex-row items-center justify-center gap-3.5'>
+                    <Button onClick={(e) => handleCancel(e)} className='bg-red-500 hover:bg-red-400'>Annuler</Button>
+                    <Button onClick={(e) => handleSubmit(e)} className='bg-blue-500 hover:bg-blue-400'>Valider</Button>
+                </div>
             </form>
         </>
     )

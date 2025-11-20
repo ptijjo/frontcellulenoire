@@ -31,6 +31,6 @@ export const downloadBook = async (bookId: string) => {
         window.URL.revokeObjectURL(url);    
     } catch (error) {
         console.error("Erreur : ", error)
-        toast.error(`${error?.message}`)
+        toast.error(`${error}`)
     }
 }

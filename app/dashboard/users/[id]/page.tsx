@@ -67,10 +67,8 @@ const Userid = ({ params }: { params: { id: string } }) => {
         }
     };
 
-    console.log(user)
-
     if (user) return (
-        <div className='flex flex-col items-center justify-center w-full relative top-[-50%] transform translate-y-1/2'>
+        <div className='flex flex-col w-full border border-black'>
             <Card className='flex flex-col  items-center w-[40%] h-[280px] shadow-lg gap-3.5 text-ellipsis overflow-hidden'>
                 <CardHeader className='flex flex-col w-full p-0'>
                     <CardTitle className=' flex flex-col w-full'>
