@@ -4,14 +4,15 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { fonctionConvertisseur } from '@/lib/ConvertisseurID';
 import { Book } from '@/lib/Interface/book.interface';
+import { getAxiosErrorMessage } from '@/lib/getAxiosErrorMessage';
 import Url from '@/lib/Url';
+import { toast } from 'react-toastify';
 import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 
 const UpdateBook = ({ params }: { params: { id: string } }) => {
-  const [book, setBook] = useState<Book | null>(null)
   const [title, setTitle] = useState<string>("");
   const [author, setAuthor] = useState<string>("");
   const [category, setCategory] = useState<string>("");
@@ -19,77 +20,74 @@ const UpdateBook = ({ params }: { params: { id: string } }) => {
   const navigate = useRouter();
 
   useEffect(() => {
-
-    const getUpdateBook = async (id: string) => {
+    const getUpdateBook = async (bookId: string) => {
       try {
-        const getBook = await axios.get(`${Url.getBooks}/${id}`, {
+        const getBook = await axios.get(`${Url.getBooks}/${bookId}`, {
           withCredentials: true,
         });
-        setBook(getBook.data.data);
         setTitle(getBook.data.data.title);
         setAuthor(getBook.data.data.author);
         const convertion = await fonctionConvertisseur(getBook.data.data.categoryId);
         setCategory(convertion);
       } catch (error) {
-        console.log(error)
+        toast.error(getAxiosErrorMessage(error));
       }
     };
-    getUpdateBook(id)
+    getUpdateBook(id);
   }, [id]);
-
 
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
 
     try {
-
       await axios.put(`${Url.getBooks}/${id}`, {
-        title: title,
-        author: author,
+        title,
+        author,
         categorie: category,
       }, {
         withCredentials: true,
       });
 
-      navigate.push("/dashboard")
-
+      navigate.push("/dashboard");
     } catch (error) {
-      console.error(error)
+      toast.error(getAxiosErrorMessage(error));
     }
-
-  }
-
+  };
 
   return (
-    <>
+    <form className="mx-auto flex w-full max-w-lg flex-col gap-4 py-8">
+      <h1 className="font-serif text-2xl text-center">Modifier le livre</h1>
 
-      <form className='flex flex-col justify-center items-center gap-3.5 w-[40%] p-3.5'>
-        <div className='w-full flex flex-col items-center justify-center'>
-          <Label><h2>Titre de l'ouvrage</h2></Label>
-          <Input value={title as string} onChange={e => setTitle(e.target.value)} />
-        </div>
-        <div className='w-full flex flex-col items-center justify-center'>
-          <Label><h2>Nom de l'auteur</h2></Label>
-          <Input value={author as string} onChange={e => setAuthor(e.target.value)} />
-        </div>
-        <div className='w-full flex flex-col items-center justify-center'>
-          <Label htmlFor='categoryName'>Choisir le genre : </Label>
-          <select id='categoryName' value={category} onChange={e => setCategory(e.target.value)}>
-            <option value="histoire" >Histoire</option>
-            <option value="religion">Religion</option>
-            <option value="spiritualite">Spiritualité</option>
-            <option value="philosophie">Philosophie</option>
-          </select>
-        </div>
+      <div>
+        <Label htmlFor="title">Titre de l&apos;ouvrage</Label>
+        <Input id="title" value={title} onChange={e => setTitle(e.target.value)} className="mt-1.5" />
+      </div>
 
-        <div className='w-full flex flex-row items-center justify-center gap-3.5'>
-          <Link href="/dashboard"><Button>Annuler</Button></Link>
-          <Button onClick={(e) => handleSubmit(e)}>Valider</Button>
-        </div>
-      </form>
+      <div>
+        <Label htmlFor="author">Nom de l&apos;auteur</Label>
+        <Input id="author" value={author} onChange={e => setAuthor(e.target.value)} className="mt-1.5" />
+      </div>
 
-    </>
-  )
+      <div>
+        <Label htmlFor="categoryName">Catégorie</Label>
+        <select id="categoryName" className="form-select mt-1.5" value={category} onChange={e => setCategory(e.target.value)}>
+          <option value="histoire">Histoire</option>
+          <option value="religion">Religion</option>
+          <option value="spiritualite">Spiritualité</option>
+          <option value="philosophie">Philosophie</option>
+          <option value="langue">Langues</option>
+          <option value="roman">Roman</option>
+        </select>
+      </div>
+
+      <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:justify-center">
+        <Button type="button" variant="outline" asChild>
+          <Link href="/dashboard">Annuler</Link>
+        </Button>
+        <Button type="button" onClick={(e) => handleSubmit(e)}>Valider</Button>
+      </div>
+    </form>
+  );
 }
 
 export default UpdateBook

@@ -4,17 +4,21 @@ import React, { useState } from 'react'
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import Image from "next/image";
 import axios from "axios";
 import Url from "@/lib/Url";
 import { useRouter } from "next/navigation";
+import AuthShell from "@/components/AuthShell";
+import { getAxiosErrorMessage } from "@/lib/getAxiosErrorMessage";
 
 type Inputs = {
     password: string;
     password2: string;
 }
-const resetPassword = ({ params }: { params: { id: string } }) => {
-    const [Erreur, setErreur] = useState<string | null>(null);
+
+const PASSWORD_PATTERN = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/;
+
+const ResetPassword = ({ params }: { params: { id: string } }) => {
+    const [erreur, setErreur] = useState<string | null>(null);
     const [message, setMessage] = useState<string | null>(null);
     const navigate = useRouter();
     const id = params.id as string;
@@ -22,74 +26,84 @@ const resetPassword = ({ params }: { params: { id: string } }) => {
     const {
         register,
         handleSubmit,
-        watch,
         formState: { errors },
     } = useForm<Inputs>();
+
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
+        if (data.password !== data.password2) {
+            setErreur("Les mots de passe ne correspondent pas");
+            window.setTimeout(() => setErreur(null), 3000);
+            return;
+        }
+
         try {
-
-            if (data.password !== data.password2) {
-                setErreur("Mots de passe sont différents");
-
-                setInterval(() => {
-                    setErreur(null);
-                }, 3000);
-            };
-
             const newPassword = await axios.put(Url.resetPassword + "/" + id, {
                 password: data.password
             });
 
-            if (newPassword.status == 200) {
-                setMessage("Votre mot de passe a été réinitialisé avec succès !")
-            };
-
             if (newPassword.status === 200) {
-                setMessage("Votre mot de passe a bien été réninitalisé !");
-                setInterval(() => {
-                    setMessage(null);
-                }, 3000);
-            };
-
-
-        } catch (error: any) {
-            setErreur(`${error.response.data.message}`);
-            setInterval(() => {
-                setErreur(null);
-            }, 3000);
+                setMessage("Votre mot de passe a été réinitialisé avec succès !");
+                window.setTimeout(() => navigate.push("/"), 3000);
+            }
+        } catch (error: unknown) {
+            setErreur(getAxiosErrorMessage(error));
+            window.setTimeout(() => setErreur(null), 3000);
         }
-
     };
+
+    if (message) {
+        return (
+            <AuthShell title="Mot de passe mis à jour" subtitle={message} showHero={false}>
+                <p className="text-center text-sm text-muted-foreground">Redirection vers la connexion…</p>
+            </AuthShell>
+        );
+    }
+
     return (
-        <>
-            <header className="flex justify-items-start items-center w-full mt-2.5">
-                <Link href="/dashboard">
-                    <div className="w-[40px] lg:w-[80px]">
-                        <Image src="/logos/logo.jpeg" alt="logo" width={80} height={80} priority className="w-full h-full" />
-                    </div >
-                </Link>
-            </header>
-            <main className="flex flex-col flex-grow w-full">
-                <form onSubmit={handleSubmit(onSubmit)} className={(!message) ? "flex flex-col gap-y-1.5 w-[40%] m-auto" : "hidden"}>
-
-                    <Input type="password" placeholder="Entrez mot de passe" id="password" autoComplete="off" className="rounded-none placeholder-red-400 pl-4" {...register("password", { required: true, pattern:/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/ })} />
-                    {errors.password && errors.password.type === "required" && <span className="text-center text-red-700">Le mot de passe est obligatoire ! </span>}
-                    {errors.password && errors.password.type === "pattern" && <span className='text-red-700 text-center'>Le mot de passe doit contenir entre 8 et 16 caractères, avec au moins une majuscule, un chiffre et un symbole.</span>}
-
-                    <Input type="password" placeholder="Confirmez le mot de passe" id="password2" autoComplete="off" className="rounded-none placeholder-red-400 pl-4" {...register("password2", { required: true })} />
-                    {errors.password2 && errors.password2.type === "required" && <span className="text-center text-red-700">Password Obligatoire ! </span>}
-
-                    <div className={(!Erreur) ? "hidden" : "text-red-600 flex m-auto"}>{Erreur}</div>
-
-                    <Button type="submit" className="mt-2.5 bg-blue-500 hover:bg-blue-400 text-black w-[80%] mx-auto">Réinitialiser mot de passe</Button>
-                </form>
-
-                <div className={(message) ? "flex flex-col gap-y-1.5 w-[80%] m-auto text-2xl" : "hidden"}>
-                    {message}
+        <AuthShell
+            title="Nouveau mot de passe"
+            subtitle="Choisissez un mot de passe sécurisé pour votre compte."
+            showHero={false}
+        >
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+                <div>
+                    <Input
+                        type="password"
+                        placeholder="Nouveau mot de passe"
+                        autoComplete="new-password"
+                        {...register("password", { required: true, pattern: PASSWORD_PATTERN })}
+                    />
+                    {errors.password?.type === "required" && (
+                        <span className="mt-1 block text-center text-sm text-destructive">Mot de passe obligatoire</span>
+                    )}
+                    {errors.password?.type === "pattern" && (
+                        <span className="mt-1 block text-center text-xs text-destructive">
+                            8 à 16 caractères, une majuscule, un chiffre et un symbole.
+                        </span>
+                    )}
                 </div>
-            </main>
-        </>
-    )
+
+                <div>
+                    <Input
+                        type="password"
+                        placeholder="Confirmer le mot de passe"
+                        autoComplete="new-password"
+                        {...register("password2", { required: true })}
+                    />
+                    {errors.password2?.type === "required" && (
+                        <span className="mt-1 block text-center text-sm text-destructive">Confirmation obligatoire</span>
+                    )}
+                </div>
+
+                {erreur && <p className="text-center text-sm text-destructive">{erreur}</p>}
+
+                <Button type="submit" className="w-full">Enregistrer</Button>
+            </form>
+            <Link href="/" className="mt-4 block text-center text-sm text-primary hover:underline">
+                Retour à la connexion
+            </Link>
+        </AuthShell>
+    );
 }
 
-export default resetPassword
+export default ResetPassword

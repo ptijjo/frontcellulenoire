@@ -1,237 +1,231 @@
 "use client"
 import { selectUser } from '@/lib/features/users/userSlice';
 import { Dispatch, Selector } from '@/lib/hooks';
-import React, { useEffect, useState } from 'react';;
-import { getBooks, selectBokkStatus, selectBook, selectNbBook, totalBook } from '@/lib/features/books/bookSlice';
-import { Book } from '@/lib/Interface/book.interface';
+import React, { useEffect, useState } from 'react';
+import { getBooks, selectBokkStatus, selectBook, selectBookPagination } from '@/lib/features/books/bookSlice';
+import { Book, BookHomeOverview } from '@/lib/Interface/book.interface';
 import { Input } from '@/components/ui/input';
-import { FaDownload } from 'react-icons/fa';
+import { FaDownload, FaEye, FaEyeSlash, FaStar } from 'react-icons/fa';
 import { MdDeleteForever, MdMode } from 'react-icons/md';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Loading from './loading';
 import BookCard from './components/BookCard';
-import { MdOutlineKeyboardDoubleArrowLeft, MdOutlineKeyboardDoubleArrowRight } from "react-icons/md";
+import WelcomeBanner from './components/WelcomeBanner';
+import HomeOverviewSection from './components/HomeOverview';
 import { downloadBook } from '@/lib/downloadBook';
 import { User } from '@/lib/Interface/user.interface';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { fonctionConvertisseur } from '@/lib/ConvertisseurID';
+import PaginationControls from '@/components/PaginationControls';
+import { useDebounce } from '@/lib/hooks/useDebounce';
+import axios from 'axios';
+import Url from '@/lib/Url';
+import { getAxiosErrorMessage } from '@/lib/getAxiosErrorMessage';
+import { trackEvent } from '@/lib/analytics';
+import { categoryLabels } from '@/lib/categoryColors';
 
+const isStaffRole = (role?: string) => role === "admin" || role === "modo";
 
-
-
+const categoryFilters = ["", "histoire", "spiritualite", "religion", "philosophie", "roman", "langue"] as const;
 
 const Dashboard = () => {
     const user: User = Selector(selectUser);
     const books: Book[] = Selector(selectBook);
-    const nbBooks: number = Selector(selectNbBook);
+    const pagination = Selector(selectBookPagination);
     const statusBook: string = Selector(selectBokkStatus);
     const [search, setSearch] = useState<string>("");
     const [filtre, setFiltre] = useState<string>("");
     const [page, setPage] = useState<number>(1);
-    const [itemPerPage, setItemPerPage] = useState<number>(20);
-    const [categoryMap, setCategoryMap] = useState<Record<string, string>>({});
+    const [overview, setOverview] = useState<BookHomeOverview | null>(null);
+    const itemPerPage = 20;
+    const debouncedSearch = useDebounce(search);
     const navigate = useRouter();
     const dispatch = Dispatch();
-
+    const isStaff = isStaffRole(user?.role);
 
     const handleCategoryFiltre = (event: React.ChangeEvent<HTMLInputElement>) => {
         setFiltre(event.target.value);
         setPage(1);
+        trackEvent("category_filter", { category: event.target.value || "all" });
+    };
+
+    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearch(event.target.value);
+        setPage(1);
+    };
+
+    const handleCategoryFromOverview = (category: string) => {
+        setFiltre(category);
+        setPage(1);
+        const radio = document.querySelector(`input[name="categorie"][value="${category}"]`) as HTMLInputElement | null;
+        if (radio) radio.checked = true;
     };
 
     useEffect(() => {
+        dispatch(getBooks({ search: debouncedSearch, filtre, page, itemPerPage }));
+    }, [debouncedSearch, filtre, page, dispatch, itemPerPage]);
 
-        (search !== "") && page == 1;
-        dispatch(getBooks({ search, filtre, page, itemPerPage }));
-        dispatch(totalBook());
-
-
-    }, [search, filtre, page, dispatch, itemPerPage]);
-
-    // Charger les noms de catégories pour chaque livre
     useEffect(() => {
-        const loadCategories = async () => {
-            const newCategoryMap: Record<string, string> = {};
-
-            for (const book of books) {
-                if (book.categoryId && !categoryMap[book.categoryId]) {
-                    try {
-                        const categoryName = await fonctionConvertisseur(book.categoryId);
-                        newCategoryMap[book.categoryId] = categoryName;
-                    } catch (error) {
-                        console.error('Erreur lors du chargement de la catégorie:', error);
-                    }
-                }
-            }
-
-            if (Object.keys(newCategoryMap).length > 0) {
-                setCategoryMap(prev => ({ ...prev, ...newCategoryMap }));
+        const fetchOverview = async () => {
+            try {
+                const response = await axios.get(Url.booksHome, { withCredentials: true });
+                setOverview(response.data.data);
+            } catch {
+                setOverview(null);
             }
         };
+        fetchOverview();
+    }, []);
 
-        if (books && books.length > 0) {
-            loadCategories();
-        }
-    }, [books]);
-
-    // const [isClient, setIsClient] = useState(false);
-
-    // useEffect(() => {
-    //     setIsClient(true);
-    // }, []);
-
-
-    useEffect(() => {
-        if (!user) return; // attendre que user soit chargé
-
-        if (user.role === "new" && user.download === 0) {
-
-            toast.info("Vous ne pouvez télécharger qu'un livre par mois");
-        }
-
-        if (user.role === "new" && user.download >= 1) {
-
-            toast.info("Vous ne pouvez plus télécharger de livre ce mois-ci");
-        }
-    }, [user]);
+    const scrollToTop = () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
     const handleDelete = (id: string) => {
-        navigate.push("/dashboard/deleteBook/" + id)
+        navigate.push("/dashboard/deleteBook/" + id);
     };
 
     const handleUpdate = (id: string) => {
-        navigate.push("/dashboard/updateBook/" + id)
+        navigate.push("/dashboard/updateBook/" + id);
     };
 
-    const handleNext = () => {
-        setPage(page + 1);
-        // Faire défiler vers le haut de la page
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+    const handleTogglePublish = async (bookId: string, isPublished: boolean) => {
+        try {
+            await axios.patch(`${Url.booksPublish}/${bookId}`, { isPublished: !isPublished }, { withCredentials: true });
+            toast.success(!isPublished ? "Livre republié" : "Livre masqué");
+            dispatch(getBooks({ search: debouncedSearch, filtre, page, itemPerPage }));
+        } catch (error) {
+            toast.error(getAxiosErrorMessage(error));
+        }
     };
 
-    const handleBefore = () => {
-        setPage(page - 1);
-        // Faire défiler vers le haut de la page
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-
-        if (page == 1) setPage(1);
+    const handleSetFeatured = async (bookId: string) => {
+        try {
+            await axios.patch(`${Url.booksFeatured}/${bookId}`, {}, { withCredentials: true });
+            toast.success("Sélection du moment mise à jour");
+            const response = await axios.get(Url.booksHome, { withCredentials: true });
+            setOverview(response.data.data);
+        } catch (error) {
+            toast.error(getAxiosErrorMessage(error));
+        }
     };
 
-    const handleBegin = () => {
-        setPage(1);
-        // Faire défiler vers le haut de la page
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+    const getCategoryLabel = (book: Book): string | undefined => {
+        return book.category?.type;
     };
 
-    const getDisplayedBooksCount = (): number => {
-        const pageBook = Math.min(page * itemPerPage, nbBooks);
-        return pageBook;
-    };
-
-    const handleEnd = () => {
-        setPage(Math.ceil(nbBooks / itemPerPage));
-        // Faire défiler vers le haut de la page
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-
-    const handleDownload = (bookId: string) => {
-        // if (user?.role === "new" && user?.download >= 1) {
-        //     toast.info("Vous ne pouvez plus télécharger de livre");
-        // } else {
-        downloadBook(bookId);
-        // }
-
-    };
+    const showOverview = !debouncedSearch && !filtre && page === 1;
 
     return (
-        <>
-            <h1 className='text-2xl font-bold text-gray-700'>Bibliothèque cellule noire</h1>
-            {/* Affichagede la barre de recherche */}
-            <div className='flex flex-col items-center justify-center w-[80%] lg:w-[60%]'>
-                <Input type='search' placeholder="Recherche ouvrage" className='w-[80%] lg:w-[60%] rounded mb-3.5' value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Search" />
+        <div className="flex w-full max-w-5xl flex-col items-center gap-5 sm:gap-6">
+            <h1 className="text-center font-serif text-2xl sm:text-3xl">Bibliothèque cellule noire</h1>
 
-                {/* {isClient && user?.role === "new" && user?.download === 0 && (<span className='text-xl font-semibold text-blue-700'> Vous ne pouvez télécharger qu'un seul livre</span>)}
-                {(isClient && user?.role === "new" && user?.download >= 1) && <span className='text-xl font-semibold text-red-700'> Vous ne pouvez plus télécharger de livres </span>} */}
-            </div>
+            {user && <WelcomeBanner user={user} />}
 
-            {/* Barre de filtrage */}
-            <div className='flex flex-row w-full text-[10px] lg:text-lg justify-center'>
-                <fieldset className='flex flex-col w-[90%] justify-center items-center'>
-                    <div className='flex flex-row w-full flex-wrap justify-around items-center gap-1.5 px-1.5' >
-                        <label className='flex items-center justify-center w-[%]'>
-                            <input type="radio" id="" name="categorie" value="" defaultChecked={true} onChange={handleCategoryFiltre} className='' />
-                            Tout
-                        </label>
-                        <label className='flex items-center justify-center'>
-                            <input type="radio" name="categorie" value="histoire" onChange={handleCategoryFiltre} />
-                            Histoire
-                        </label>
+            {showOverview && (
+                <HomeOverviewSection
+                    overview={overview}
+                    onCategorySelect={handleCategoryFromOverview}
+                    activeCategory={filtre}
+                />
+            )}
 
-                        <label className='flex items-center justify-center'>
-                            <input type="radio" name="categorie" value="spiritualite" onChange={handleCategoryFiltre} />
-                            Spiritualité
-                        </label>
+            <Input
+                type="search"
+                placeholder="Rechercher un ouvrage…"
+                className="w-full max-w-md"
+                value={search}
+                onChange={handleSearchChange}
+                aria-label="Recherche"
+            />
 
-                        <label className='flex items-center justify-center w-[%]'>
-                            <input type="radio" name="categorie" value="religion" onChange={handleCategoryFiltre} />
-                            Religion
-                        </label>
-
-                        <label className='flex items-center justify-center w-[%]'>
-                            <input type="radio" name="categorie" value="philosophie" onChange={handleCategoryFiltre} />
-                            Philosophie
-                        </label>
-
-                        <label className='flex items-center justify-center w-[%]'>
-                            <input type="radio" name="categorie" value="roman" onChange={handleCategoryFiltre} />
-                            Roman
-                        </label>
-
-                        {/*<label className='flex items-center justify-center w-[%]'>
-                            <input type="radio" name="categorie" value="sciences" onChange={handleCategoryFiltre} />
-                            Sciences
-                        </label>*/}
-
-                        <label className='flex items-center justify-center w-[%]'>
-                            <input type="radio" name="categorie" value="langue" onChange={handleCategoryFiltre} />
-                            Langues
-                        </label>
-                    </div>
-                </fieldset>
-
-            </div>
-            {(statusBook === "loading" || statusBook === "idle") && <Loading />}
-            {(books?.length === 0 && statusBook === "success") && <div className='mt-[20px]'>Pas de livres disponibles ! </div>}
-
-            <div className='flex flex-row flex-wrap w-full gap-3.5 items-center justify-center'>
-                {books?.map((book: Book) => (
-
-                    <div className='flex flex-col w-[220px] h-[250px] lg:h-[320px] rounded-md items-center justify-center relative' key={book.id} >
-                        <BookCard title={book.title} author={book.author} category={categoryMap[book.categoryId]} />
-                        <div className='flex flex-row h-[40px] m-0 p-0 text-xl items-center justify-center absolute bottom-[0px] lg:bottom-[20px] left-[60%] transform translate-x-[-50%]'>
-                            <div onClick={() => handleDownload(book.id)} className='cursor-pointer hover:text-gray-700' aria-label={book.title}><FaDownload />
-                            </div>
-                            {(user?.role !== "user" && user?.role !== "new") && <div className='flex flex-row items-center justify-center h-full gap-2.5 m-2.5'>
-                                <MdMode className='text-blue-700 hover:cursor-pointer' onClick={() => handleUpdate(book.id)} />
-                                <MdDeleteForever className='text-red-700 hover:cursor-pointer' onClick={() => handleDelete(book.id)} />
-                            </div>}
-                        </div>
-                    </div >
+            <fieldset className="filter-radio flex w-full max-w-2xl flex-wrap justify-center gap-2">
+                {categoryFilters.map((value) => (
+                    <label key={value || "all"}>
+                        <input
+                            type="radio"
+                            name="categorie"
+                            value={value}
+                            defaultChecked={value === ""}
+                            onChange={handleCategoryFiltre}
+                        />
+                        {value === "" ? "Tout" : (categoryLabels[value] ?? value)}
+                    </label>
                 ))}
-            </div >
+            </fieldset>
 
-            {/* Pagination */}
-            <div className={(books.length !== 0) ? 'flex gap-3.5 my-3.5' : "hidden"}>
-                <MdOutlineKeyboardDoubleArrowLeft className={(page === 1) ? "hidden" : 'cursor-pointer hover:text-gray-700 text-2xl'} onClick={handleBegin} />
-                <p onClick={handleBefore} className={(page === 1) ? "hidden" : 'cursor-pointer hover:text-gray-700'}>Precedent</p>
-                <p className={(nbBooks) ? 'border' : 'hidden'}>{getDisplayedBooksCount()} - {nbBooks}</p>
-                <p onClick={handleNext} className={(books.length === itemPerPage) ? 'cursor-pointer hover:text-gray-700' : "hidden"} >Suivant</p>
-                <MdOutlineKeyboardDoubleArrowRight onClick={handleEnd} className={(books.length === itemPerPage) ? 'cursor-pointer hover:text-gray-700 text-2xl' : "hidden"} />
-            </div >
-            <ToastContainer autoClose={2000} />
-        </>
+            {(statusBook === "loading" || statusBook === "idle") && <Loading />}
+            {(books?.length === 0 && statusBook === "success") && (
+                <p className="text-muted-foreground">Pas de livres disponibles.</p>
+            )}
+
+            <div className="grid w-full grid-cols-2 place-items-center gap-4 sm:grid-cols-3 md:grid-cols-4 lg:gap-6">
+                {books?.map((book: Book) => (
+                    <div
+                        className={`group relative flex flex-col items-center pb-10 ${book.isPublished === false ? "opacity-60" : ""}`}
+                        key={book.id}
+                    >
+                        {book.isPublished === false && (
+                            <span className="badge-hidden absolute right-0 top-0 z-10">Masqué</span>
+                        )}
+                        {book.isFeatured && (
+                            <span className="badge-featured absolute left-0 top-0 z-10">Sélection</span>
+                        )}
+                        <BookCard title={book.title} author={book.author} category={getCategoryLabel(book)} />
+                        <div className="absolute bottom-0 flex items-center gap-2 text-lg text-muted-foreground">
+                            {book.isPublished !== false && (
+                                <button
+                                    type="button"
+                                    onClick={() => downloadBook(book.id, book.title, getCategoryLabel(book))}
+                                    className="rounded p-1 transition-colors hover:text-primary"
+                                    aria-label={`Télécharger ${book.title}`}
+                                >
+                                    <FaDownload />
+                                </button>
+                            )}
+                            {isStaff && (
+                                <>
+                                    <button
+                                        type="button"
+                                        onClick={() => handleTogglePublish(book.id, book.isPublished !== false)}
+                                        className="rounded p-1 transition-colors hover:text-primary"
+                                        aria-label="Modérer"
+                                    >
+                                        {book.isPublished === false ? <FaEye className="text-green-500" /> : <FaEyeSlash className="text-orange-400" />}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => handleSetFeatured(book.id)}
+                                        className="rounded p-1 transition-colors hover:text-primary"
+                                        aria-label="Mettre en avant"
+                                    >
+                                        <FaStar className={book.isFeatured ? "text-primary" : "text-muted-foreground"} />
+                                    </button>
+                                    <button type="button" onClick={() => handleUpdate(book.id)} className="rounded p-1 transition-colors hover:text-primary" aria-label="Modifier">
+                                        <MdMode />
+                                    </button>
+                                    <button type="button" onClick={() => handleDelete(book.id)} className="rounded p-1 transition-colors hover:text-destructive" aria-label="Supprimer">
+                                        <MdDeleteForever />
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {books.length > 0 && (
+                <PaginationControls
+                    pagination={pagination}
+                    className="mt-4"
+                    onPrevious={() => { if (pagination.hasPreviousPage) { setPage(page - 1); scrollToTop(); } }}
+                    onNext={() => { if (pagination.hasNextPage) { setPage(page + 1); scrollToTop(); } }}
+                    onBegin={() => { setPage(1); scrollToTop(); }}
+                    onEnd={() => { if (pagination.totalPages > 0) { setPage(pagination.totalPages); scrollToTop(); } }}
+                />
+            )}
+            <ToastContainer theme="dark" autoClose={2000} />
+        </div>
     )
 };
 

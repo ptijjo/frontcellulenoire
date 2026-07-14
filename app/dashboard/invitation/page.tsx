@@ -1,16 +1,15 @@
 "use client"
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { getAxiosErrorMessage } from '@/lib/getAxiosErrorMessage';
 import Url from '@/lib/Url';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-
 
 type Inputs = {
     email: string;
-
 };
 
 const Invitation = () => {
@@ -20,7 +19,6 @@ const Invitation = () => {
     const {
         register,
         handleSubmit,
-        watch,
         formState: { errors },
     } = useForm<Inputs>();
 
@@ -30,45 +28,54 @@ const Invitation = () => {
                 withCredentials: true,
             });
 
-            setMessage(`Email envoyé à ${data.email}`);
+            setMessage(`Invitation envoyée à ${data.email}`);
 
             setTimeout(() => {
-                setMessage(null)
-                navigate.push("/dashboard")
+                setMessage(null);
+                navigate.push("/dashboard");
             }, 3000);
-        } catch (error: any) {
-            console.error(`${error.response.data.message}`);
-            setErreur(error.response.data.message);
+        } catch (error: unknown) {
+            setErreur(getAxiosErrorMessage(error));
         }
-
     };
 
-    return (
-        <>
-            <h1 className='text-2xl font-semibold item-center'>Inviter un nouveau lecteur</h1>
-            <div className={(message !== null) ? 'flex flex-col justify-center items-center gap-y-1.5 w-[40%] text-center text-2xl flex-grow' : "hidden"}>
-                {message}
+    if (message) {
+        return (
+            <div className="flex w-full max-w-md flex-col items-center gap-4 py-12 text-center">
+                <h1 className="font-serif text-2xl">Invitation envoyée</h1>
+                <p className="text-muted-foreground">{message}</p>
             </div>
-            <form onSubmit={handleSubmit(onSubmit)} className={(message === null) ? "flex flex-col gap-y-1.5 w-[80%] lg:w-[40%] mx-auto my-[50%] lg:my-[20%]" : "hidden"}>
-                <Input type="email" placeholder="e-mail" id="identifiant" autoComplete="off" className="rounded placeholder-red-400 pl-4" {...register("email", { required: true })} aria-label="Email" />
-                {errors.email && errors.email.type === "required" && <span className='text-red-700 text-center'>Email Obligatoire !</span>}
+        );
+    }
 
-
-                <div className='flex items-center justify-center mt-2.5 gap-3.5 w-[60%] m-auto'>
-                    <Button type='button' onClick={() => navigate.back()} className='bg-red-500 hover:bg-red-400 w-1/2 rounded'> Annuler</Button>
-                    <Button type="submit" className="bg-blue-500 hover:bg-blue-400 w-1/2 rounded">Inviter</Button>
+    return (
+        <div className="flex w-full max-w-md flex-col items-center gap-6 py-8">
+            <h1 className="font-serif text-2xl sm:text-3xl">Inviter un lecteur</h1>
+            <form onSubmit={handleSubmit(onSubmit)} className="flex w-full flex-col gap-4">
+                <div>
+                    <Input
+                        type="email"
+                        placeholder="Adresse e-mail"
+                        autoComplete="off"
+                        {...register("email", { required: true })}
+                        aria-label="Email"
+                    />
+                    {errors.email?.type === "required" && (
+                        <span className="mt-1 block text-center text-sm text-destructive">E-mail obligatoire</span>
+                    )}
                 </div>
 
-                <div className={(erreur === null) ? 'hidden' : "text-2xl text-center text-red"}>
-                    {erreur}
+                <div className="flex flex-col gap-2 sm:flex-row">
+                    <Button type="button" variant="outline" onClick={() => navigate.back()} className="flex-1">
+                        Annuler
+                    </Button>
+                    <Button type="submit" className="flex-1">Inviter</Button>
                 </div>
+
+                {erreur && <p className="text-center text-sm text-destructive">{erreur}</p>}
             </form>
-
-
-
-
-        </>
-    )
+        </div>
+    );
 }
 
 export default Invitation;

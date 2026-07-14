@@ -1,8 +1,8 @@
-const baseUrl="http://127.0.0.1:8080"
+const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8080";
 
 const Url = {
     connection: baseUrl + "/login",
-    createUser: baseUrl + "/users", 
+    createUser: baseUrl + "/users",
     decodage: baseUrl + "/users_decodeToken",
     userById: baseUrl + "/users",
     getBooks: baseUrl + "/books",
@@ -14,7 +14,11 @@ const Url = {
     forgetPassword: baseUrl + "/users_forgetPassword",
     updateRole: baseUrl + "/users_updateRole",
     downloadBook: baseUrl + "/books_download",
-    logout:baseUrl + "/logout",
-}
+    logout: baseUrl + "/logout",
+    booksHome: baseUrl + "/books_home",
+    adminDashboard: baseUrl + "/admin_dashboard",
+    booksPublish: baseUrl + "/books_publish",
+    booksFeatured: baseUrl + "/books_featured",
+};
 
 export default Url;

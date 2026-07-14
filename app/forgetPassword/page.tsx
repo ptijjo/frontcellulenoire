@@ -6,75 +6,80 @@ import { Button } from "@/components/ui/button";
 import axios from "axios";
 import Url from "@/lib/Url";
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
-
+import { getAxiosErrorMessage } from "@/lib/getAxiosErrorMessage";
+import AuthShell from "@/components/AuthShell";
 
 type Inputs = {
     email: string
 }
+
 const ForgetPassword = () => {
-    const [Erreur, setErreur] = useState<string | null>(null);
+    const [erreur, setErreur] = useState<string | null>(null);
     const [message, setMessage] = useState<string | null>(null);
     const navigate = useRouter();
     const {
         register,
         handleSubmit,
-        watch,
         formState: { errors },
     } = useForm<Inputs>();
+
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
         try {
-            console.log(data)
-            const findEmail = await axios.post(Url.forgetPassword, {
+            const response = await axios.post(Url.forgetPassword, {
                 email: data.email
             });
 
-            console.log(findEmail);
-
-            if (findEmail.status === 200) {
-                setMessage("Un email vous sera transmis d'ici quelques minutes !");
-                setInterval(() => {
+            if (response.status === 200) {
+                setMessage(response.data.message ?? "Si cette adresse email est enregistrée, un lien de réinitialisation vous sera envoyé.");
+                window.setTimeout(() => {
                     setMessage(null);
                     navigate.push("/");
-                    navigate.refresh();
                 }, 3000);
             }
-
-        } catch (error: any) {
-            setErreur(`${error.response.data.message}`);
-            setInterval(() => {
+        } catch (error: unknown) {
+            setErreur(getAxiosErrorMessage(error));
+            window.setTimeout(() => {
                 setErreur(null);
             }, 3000);
         }
-
     };
+
+    if (message) {
+        return (
+            <AuthShell title="E-mail envoyé" subtitle={message} showHero={false}>
+                <p className="text-center text-sm text-muted-foreground">Redirection vers la connexion…</p>
+            </AuthShell>
+        );
+    }
+
     return (
-        <>
-            <header className="flex justify-items-start items-center w-full mt-2.5">
-                <Link href="/dashboard">
-                    <div className="w-[40px] lg:w-[80px]">
-                        <Image src="/logos/logo.jpeg" alt="logo" width={80} height={80} priority className="w-full h-full" />
-                    </div >
-                </Link>
-            </header>
-            <main className="flex flex-col flex-grow w-full">
-                <form onSubmit={handleSubmit(onSubmit)} className={(message === null) ? "flex flex-col gap-y-1.5 w-[40%] m-auto" : "hidden"}>
-
-                    <Input type="email" placeholder="Entrez email" id="email" autoComplete="off" className="rounded-none placeholder-red-400 pl-4" {...register("email", { required: true })} />
-                    {errors.email && errors.email.type === "required" && <span className="text-center text-red-700">Email Obligatoire ! </span>}
-
-                    <div className={(!Erreur) ? "hidden" : "text-red-600 flex m-auto"}>{Erreur}</div>
-
-                    <Button type="submit" className="mt-2.5 bg-blue-500 hover:bg-blue-400 text-black w-[80%] mx-auto">Réinitialiser mot de passe</Button>
-                </form>
-
-                <div className={(message === null) ? "hidden" : "flex flex-col gap-y-1.5 w-[80%] m-auto text-2xl"}>
-                    {message}
+        <AuthShell
+            title="Mot de passe oublié"
+            subtitle="Entrez votre adresse e-mail pour recevoir un lien de réinitialisation."
+        >
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+                <div>
+                    <Input
+                        type="email"
+                        placeholder="Votre e-mail"
+                        autoComplete="email"
+                        {...register("email", { required: true })}
+                    />
+                    {errors.email?.type === "required" && (
+                        <span className="mt-1 block text-center text-sm text-destructive">E-mail obligatoire</span>
+                    )}
                 </div>
-            </main>
-        </>
-    )
+
+                {erreur && <p className="text-center text-sm text-destructive">{erreur}</p>}
+
+                <Button type="submit" className="w-full">Réinitialiser le mot de passe</Button>
+            </form>
+            <Link href="/" className="mt-4 block text-center text-sm text-primary hover:underline">
+                Retour à la connexion
+            </Link>
+        </AuthShell>
+    );
 }
 
 export default ForgetPassword

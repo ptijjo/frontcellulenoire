@@ -1,94 +1,45 @@
-import React from 'react';
-
+import React from "react";
+import { getCategoryColor } from "@/lib/categoryColors";
+import { cn } from "@/lib/utils";
 
 interface BookProps {
-    title: string;
-    author: string;
-    category?: string;
-};
+  title: string;
+  author: string;
+  category?: string;
+  compact?: boolean;
+}
 
-const getCategoryColor = (category?: string): string => {
-    switch (category?.toLowerCase()) {
-        case 'histoire':
-            return '#C4A57B'; // Beige doré doux
-        case 'spiritualite':
-            return '#B8A9D4'; // Lavande clair
-        case 'religion':
-            return '#8FB3D5'; // Bleu ciel doux
-        case 'philosophie':
-            return '#95A5A6'; // Gris bleuté clair
-        case 'roman':
-            return '#D4A5A5'; // Rose poudré
-        case 'langue':
-        case 'langues':
-            return '#E6B89C'; // Pêche clair
-        default:
-            return '#B0BEC5'; // Gris bleu très clair
-    }
-};
+const BookCard: React.FC<BookProps> = ({ title, author, category, compact = false }) => {
+  const coverColor = getCategoryColor(category);
 
-const BookCard: React.FC<BookProps> = ({ title, author, category }) => {
-    const coverColor = getCategoryColor(category);
-
-    return (
-        <div style={{ ...styles.bookContainer, backgroundColor: coverColor }} className='hover:scale-[1.05] transition-transform duration-300'>
-            <div style={{ ...styles.spine, backgroundColor: "#3b3b3b" }}>
-                <p style={styles.spineText}>{author}</p>
-            </div>
-            <div style={styles.cover}>
-                <h1 style={styles.title}>{title}</h1>
-            </div>
-        </div>
-    );
-};
-
-const styles: Record<string, React.CSSProperties> = {
-    bookContainer: {
-        display: 'flex',
-        width: '220px',
-        height: '320px',
-        boxShadow: '3px 3px 15px rgba(0,0,0,0.3)',
-        // margin: '20px',
-        borderRadius: '8px',
-        overflow: 'hidden',
-        cursor: 'pointer',
-    },
-    spine: {
-        width: '40px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        writingMode: 'vertical-rl',
-        transform: 'rotate(180deg)',
-        padding: '5px',
-        color: 'white',
-    },
-    spineText: {
-        fontSize: '12px',
-        fontWeight: 'bold',
-        textAlign: 'center',
-        height: '100%',
-    },
-    cover: {
-        flex: 1,
-        padding: '15px',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        color: '#2c3e50',
-    },
-    title: {
-        fontSize: '20px',
-        fontWeight: 'bold',
-        textAlign: 'center',
-        marginBottom: '10px',
-        color: '#2c3e50',
-    },
-    author: {
-        fontSize: '14px',
-        color: '#555',
-    },
+  return (
+    <div
+      className={cn(
+        "group flex cursor-pointer overflow-hidden rounded-lg shadow-lg shadow-black/30 transition-transform duration-300 hover:scale-[1.03]",
+        compact ? "h-[220px] w-[150px] sm:h-[260px] sm:w-[170px]" : "h-[240px] w-[160px] sm:h-[300px] sm:w-[200px] lg:h-[320px] lg:w-[220px]"
+      )}
+      style={{ backgroundColor: coverColor }}
+    >
+      <div className="flex w-8 shrink-0 items-center justify-center bg-[#1a1814] sm:w-10">
+        <p
+          className="text-[9px] font-bold uppercase tracking-wide text-[#c4a57b] sm:text-[10px]"
+          style={{ writingMode: "vertical-rl", transform: "rotate(180deg)" }}
+        >
+          {author}
+        </p>
+      </div>
+      <div className="flex flex-1 flex-col items-center justify-center p-3 sm:p-4">
+        <h2 className="font-serif text-center text-sm font-semibold leading-snug text-[#f0ebe3] sm:text-base lg:text-lg line-clamp-4">
+          {title}
+        </h2>
+        {category && (
+          <span className="mt-2 rounded-full bg-black/25 px-2 py-0.5 text-[10px] uppercase tracking-wider text-[#e8e4dc] sm:text-xs">
+            {category}
+          </span>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default BookCard;

@@ -8,18 +8,14 @@ interface idCategory {
 }
 
 const ConvertisseurID: React.FC<idCategory> = ({ id }) => {
-
     const [nom, setNom] = useState("");
 
     useEffect(() => {
-
         axios.get(`${Url.getCategory}/${id}`, {
-           withCredentials:true,
+           withCredentials: true,
         }).then(response => {
             setNom(response.data.data.type);
-        })
-            .catch(error => console.log(error))
-
+        }).catch(() => undefined);
     }, [id]);
 
     return (
@@ -36,6 +32,5 @@ export const fonctionConvertisseur = async (id: string): Promise<string> => {
 
     return catgeorie.data.data.type;
 }
-
 
 export default ConvertisseurID

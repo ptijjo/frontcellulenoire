@@ -8,13 +8,11 @@ import {
     MenubarTrigger,
 } from "@/components/ui/menubar";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Dispatch, Selector } from '@/lib/hooks';
-// import { logout } from '@/lib/features/users/userSlice';
+import { Dispatch } from '@/lib/hooks';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { FaShield } from "react-icons/fa6";
 import { logout } from '@/lib/features/users/userSlice';
-
 
 interface HeaderProps {
     pseudo: string;
@@ -26,55 +24,56 @@ interface HeaderProps {
 const MenuHeader: React.FC<HeaderProps> = ({ pseudo, id, avatar, role }) => {
     const dispatch = Dispatch();
     const router = useRouter();
-
-    let errorLogin = Selector(state => state.user.error);
+    const isStaff = role !== "user" && role !== "new";
 
     const HandleDeconnection = () => {
         dispatch(logout());
-        console.log(errorLogin)
         router.push("/");
-
     };
 
-
-    const HandleProfil = (id: string) => {
-        router.push(`/dashboard/profil/${id}`)
+    const HandleProfil = (userId: string) => {
+        router.push(`/dashboard/profil/${userId}`)
     }
 
     return (
-        <Menubar className=" flex items-center justify-center text-black shadow-none border-none">
+        <Menubar className="border-none bg-transparent shadow-none">
             <MenubarMenu>
-                <MenubarTrigger className=" flex items-center justify-center text-lg gap-3 relative" value="bouton_menu" tabIndex={-1} aria-label="bouton_menu" id="bouton_menu" title="bouton_menu">
-                    <Avatar className="cursor-pointer">
-                        <AvatarImage src={avatar} alt="image de profil" className='' />
-                        <AvatarFallback>avatar</AvatarFallback>
+                <MenubarTrigger className="flex cursor-pointer items-center gap-2 rounded-lg border border-border bg-secondary/50 px-2 py-1.5 text-sm sm:gap-3 sm:px-3">
+                    <Avatar className="h-8 w-8 sm:h-9 sm:w-9">
+                        <AvatarImage src={avatar} alt="Profil" />
+                        <AvatarFallback className="bg-muted text-muted-foreground">CN</AvatarFallback>
                     </Avatar>
-                    <p>{pseudo}</p>
-                    <FaShield className={(role === 'admin') ? 'absolute bottom-0 left-[30%] text-red-700' : "hidden"} />
-                    <FaShield className={(role === "modo") ? 'absolute bottom-0 left-[30%] text-blue-700' : "hidden"} />
+                    <p className="max-w-[100px] truncate sm:max-w-[160px]">{pseudo}</p>
+                    {role === 'admin' && <FaShield className="shrink-0 text-red-500" />}
+                    {role === 'modo' && <FaShield className="shrink-0 text-primary" />}
                 </MenubarTrigger>
-                <MenubarContent className="border-none">
-
-                    <MenubarItem className=" flex flex-col justify-center items-center w-1/2 relative left-12">
-                        <button className='hover:bg-blue-500 rounded px-2.5 text-black' onClick={() => HandleProfil(id)}>Profil</button>
+                <MenubarContent className="border-border bg-card text-foreground">
+                    <MenubarItem className="focus:bg-secondary">
+                        <button type="button" className="w-full text-left" onClick={() => HandleProfil(id)}>Profil</button>
                     </MenubarItem>
 
-                    <MenubarItem className={(role !== "user" && role !== "new" ? "flex flex-col justify-center items-center w-1/2 relative left-12" : "hidden")}>
-                        <Link href="/dashboard/invitation" className="hover:bg-blue-500 rounded px-2.5 text-black"><p className='text-black'>Invitation</p></Link>
-                    </MenubarItem>
+                    {isStaff && (
+                        <>
+                            <MenubarItem className="focus:bg-secondary">
+                                <Link href="/dashboard/admin" className="w-full">Tableau de bord</Link>
+                            </MenubarItem>
+                            <MenubarItem className="focus:bg-secondary">
+                                <Link href="/dashboard/invitation" className="w-full">Invitation</Link>
+                            </MenubarItem>
+                            <MenubarItem className="focus:bg-secondary">
+                                <Link href="/dashboard/users" className="w-full">Utilisateurs</Link>
+                            </MenubarItem>
+                            <MenubarItem className="focus:bg-secondary">
+                                <Link href="/dashboard/ajout" className="w-full">Ajouter un livre</Link>
+                            </MenubarItem>
+                        </>
+                    )}
 
-                    <MenubarItem className={(role !== "user" && role !== "new" ? "flex flex-col justify-center items-center w-1/2 relative left-12" : "hidden")}>
-                        <Link href="/dashboard/users" className="hover:bg-blue-500 rounded px-2.5 text-black"><p className='text-black'>Utilisateurs</p></Link>
+                    <MenubarItem className="focus:bg-secondary">
+                        <button type="button" className="w-full text-left text-destructive" onClick={HandleDeconnection}>
+                            Déconnexion
+                        </button>
                     </MenubarItem>
-
-                    <MenubarItem className={(role !== "user" && role !== "new" ? "flex flex-col justify-center items-center w-1/2 relative left-12 " : "hidden")}>
-                        <Link href="/dashboard/ajout" className="hover:bg-blue-500 rounded"><p className='text-black'>Ajout livre</p></Link>
-                    </MenubarItem>
-
-                    <MenubarItem className=" flex flex-col justify-center items-center w-1/2 relative left-12">
-                        <button className='hover:bg-blue-500 rounded px-2.5 text-black' onClick={HandleDeconnection}>Déconnection</button>
-                    </MenubarItem>
-
                 </MenubarContent>
             </MenubarMenu>
         </Menubar>

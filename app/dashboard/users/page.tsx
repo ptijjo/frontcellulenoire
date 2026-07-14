@@ -1,101 +1,109 @@
 "use client"
 import { Input } from '@/components/ui/input'
 import React, { useEffect, useState } from 'react'
-import { Book } from '../../../lib/Interface/book.interface';
 import axios from 'axios';
 import Url from '@/lib/Url';
 import { User } from '@/lib/Interface/user.interface';
+import { PaginationMeta } from '@/lib/Interface/pagination.interface';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
 import Image from 'next/image';
+import PaginationControls from '@/components/PaginationControls';
+import { useDebounce } from '@/lib/hooks/useDebounce';
+
+const defaultPagination: PaginationMeta = {
+    page: 1,
+    itemPerPage: 20,
+    total: 0,
+    totalPages: 0,
+    hasNextPage: false,
+    hasPreviousPage: false,
+};
 
 const Users = () => {
     const [search, setSearch] = useState<string>("");
     const [page, setPage] = useState<number>(1);
-    const [itemPerPage, setItemPerPage] = useState<number>(20);
-    const [users, setUsers] = useState<User[] | []>([]);
+    const itemPerPage = 20;
+    const debouncedSearch = useDebounce(search);
+    const [users, setUsers] = useState<User[]>([]);
+    const [pagination, setPagination] = useState<PaginationMeta>(defaultPagination);
 
     useEffect(() => {
-
-        const allUser = async (search: string, page: number, itemPerpage: number): Promise<Book[]> => {
-
+        const fetchUsers = async () => {
             const response = await axios.get(Url.userById, {
                 withCredentials: true,
-                params: { search, page, itemPerPage }
-            })
+                params: { search: debouncedSearch, page, itemPerPage }
+            });
             setUsers(response.data.data);
-            return response.data.data;
-        }
+            setPagination(response.data.pagination ?? defaultPagination);
+        };
 
-        allUser(search, page, itemPerPage);
+        fetchUsers();
+    }, [debouncedSearch, page, itemPerPage]);
 
-
-    }, [search, page]);
-
-    const handleNext = () => {
-        setPage(page + 1);
-        // Faire défiler vers le haut de la page
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearch(event.target.value);
+        setPage(1);
     };
 
-    const handleBefore = () => {
-        setPage(page - 1);
-        // Faire défiler vers le haut de la page
+    const scrollToTop = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
-
-        if (page == 1) setPage(1)
     };
-
 
     return (
-        <>
-            {/* Affichagede la barre de recherche */}
-            <div className='flex flex-row items-center justify-center w-[80%] lg:w-[60%]'>
-                <Input type='search' placeholder="Recherche utilisateur" className='w-[80%] lg:w-[60%] rounded' value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Search" />
-            </div>
-            <h1 className='text-2xl font-semibold items-center mb-3.5'>Utilisateurs</h1>
+        <div className="flex w-full max-w-5xl flex-col items-center gap-5">
+            <h1 className="font-serif text-2xl sm:text-3xl">Utilisateurs</h1>
 
-            {(users?.length === 0) && <div className='mt-[20px]'>Aucun utilisateur ! </div>}
+            <Input
+                type="search"
+                placeholder="Rechercher un utilisateur…"
+                className="w-full max-w-md"
+                value={search}
+                onChange={handleSearchChange}
+                aria-label="Recherche utilisateur"
+            />
 
-            <div className='flex flex-row flex-wrap w-full gap-3.5 lg:p-2.5 items-center justify-between p-3.5'>
+            {(users?.length === 0) && (
+                <p className="text-muted-foreground">Aucun utilisateur trouvé.</p>
+            )}
+
+            <div className="grid w-full grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:gap-4">
                 {users?.map((user: User) => (
-                    <Link href={`/dashboard/users/${user.id}`} className='flex- flex-col items-center w-[164px] lg:w-[18%] lg:h-[280px]' key={user.id}>
-                        <Card className='flex flex-col  items-center w-full h-[280px] hover:scale-[105%] shadow-lg gap-3.5 text-ellipsis overflow-hidden transition-all'>
-                            <CardHeader className='flex flex-col w-full p-0'>
-                                <CardTitle className=' flex flex-col w-full'>
-                                    <p className='text-md text-center w-full p-1'>{user.pseudo}</p>
-                                    {/* <p className='text-xs text-center'>{user.email}</p> */}
-                                </CardTitle>
+                    <Link href={`/dashboard/users/${user.id}`} key={user.id} className="group">
+                        <Card className="flex h-full flex-col items-center gap-2 overflow-hidden transition-transform hover:scale-[1.02]">
+                            <CardHeader className="w-full p-3 pb-0">
+                                <CardTitle className="truncate text-center text-sm">{user.pseudo}</CardTitle>
                             </CardHeader>
-                            <CardContent className='rounded-full w-[150px] h-[150px] flex justify-center items-center border relative overflow-hidden'>
-                                <Image src={user.avatar}
+                            <CardContent className="relative h-[100px] w-[100px] overflow-hidden rounded-full border border-border sm:h-[120px] sm:w-[120px]">
+                                <Image
+                                    src={user.avatar}
                                     alt={user.pseudo}
                                     fill
                                     priority
-                                    sizes="150px"
+                                    sizes="120px"
+                                    className="object-cover"
                                 />
                             </CardContent>
-                            <CardFooter className='flex flex-row h-[40px] m-0 p-0 text-xl items-center justify-center'>
-                                <div className='flex flex-row items-center justify-center h-full gap-2.5 m-2.5'>
-                                    {user.role}
-                                </div>
-                                <div>
-                                    {user.download}
-                                </div>
+                            <CardFooter className="flex w-full flex-col items-center gap-1 pb-4 text-xs text-muted-foreground">
+                                <span className="rounded-full bg-secondary px-2 py-0.5 capitalize">{user.role}</span>
+                                <span>{user.download} téléchargement(s)</span>
                             </CardFooter>
-                        </Card >
+                        </Card>
                     </Link>
                 ))}
-
             </div>
 
-            {/* Pagination */}
-            <div className={(users.length !== 0) ? 'flex gap-3.5 mt-32' : "hidden"}>
-                <p onClick={handleBefore} className={(page === 1) ? "hidden" : 'cursor-pointer'}>Precedent</p>
-                <p>---</p>
-                <p onClick={handleNext} className={(users.length == itemPerPage) ? 'cursor-pointer' : "hidden"} >Suivant</p>
-            </div>
-        </ >
+            {users.length > 0 && (
+                <PaginationControls
+                    pagination={pagination}
+                    className="mt-4"
+                    onPrevious={() => { if (pagination.hasPreviousPage) { setPage(page - 1); scrollToTop(); } }}
+                    onNext={() => { if (pagination.hasNextPage) { setPage(page + 1); scrollToTop(); } }}
+                    onBegin={() => { setPage(1); scrollToTop(); }}
+                    onEnd={() => { if (pagination.totalPages > 0) { setPage(pagination.totalPages); scrollToTop(); } }}
+                />
+            )}
+        </div>
     )
 }
 

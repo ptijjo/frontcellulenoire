@@ -17,8 +17,7 @@ const ConvertisseurNom: React.FC<idBook> = ({ id }) => {
             withCredentials: true,
         }).then(response => {
             setNom(response.data.data.title);
-        })
-            .catch(error => console.log(error))
+        }).catch(() => undefined)
 
     }, [id]);
 

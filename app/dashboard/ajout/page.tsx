@@ -3,10 +3,10 @@ import FormBook from './components/FormBook'
 
 const AjoutBook = () => {
     return (
-        <>
-            <h1 className='text-2xl font-semibold item-center'>Ajouter un nouveau livre</h1>
+        <div className="flex w-full max-w-lg flex-col items-center gap-4">
+            <h1 className="font-serif text-2xl sm:text-3xl">Ajouter un livre</h1>
             <FormBook />
-        </>
+        </div>
     )
 }
 

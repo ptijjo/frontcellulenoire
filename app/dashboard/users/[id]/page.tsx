@@ -6,12 +6,14 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image';
 import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { Selector } from '@/lib/hooks';
 import { selectUser } from '@/lib/features/users/userSlice';
 import dayjs from "dayjs";
+import { getAxiosErrorMessage } from '@/lib/getAxiosErrorMessage';
+import { toast } from 'react-toastify';
 import ConvertisseurNom from '@/lib/ConvertisseurNom';
-
 
 const Userid = ({ params }: { params: { id: string } }) => {
     const id = params.id as string;
@@ -19,27 +21,21 @@ const Userid = ({ params }: { params: { id: string } }) => {
     const [open, setOpen] = useState<boolean>(false);
     const [role, setRole] = useState<string>("");
     const connected = Selector(selectUser);
-
     const navigate = useRouter();
 
-
     useEffect(() => {
-
-        const user = async (id: string): Promise<User> => {
-            const response = await axios.get(Url.userById + "/" + id, {
+        const fetchUser = async (userId: string): Promise<User> => {
+            const response = await axios.get(Url.userById + "/" + userId, {
                 withCredentials: true,
-                params: { id }
-            })
+                params: { id: userId }
+            });
             setUser(response.data.data);
             setRole(response.data.data.role);
             return response.data.data;
         };
 
-        user(id);
-
-
+        fetchUser(id);
     }, [id]);
-
 
     const handleClick = () => {
         setOpen(!open);
@@ -50,72 +46,67 @@ const Userid = ({ params }: { params: { id: string } }) => {
         setOpen(false);
     };
 
-
-
     const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
         try {
-            await axios.put(Url.updateRole + "/" + id, {
-                role: role
-            }, {
-                withCredentials: true,
-            });
+            await axios.put(Url.updateRole + "/" + id, { role }, { withCredentials: true });
             navigate.push("/dashboard/users");
-        } catch (error: any) {
-            const message = error.response?.data?.message || "Une erreur s'est produite";
-            console.log(message);
+        } catch (error: unknown) {
+            toast.error(getAxiosErrorMessage(error));
         }
     };
 
-    if (user) return (
-        <div className='flex flex-col w-full border border-black'>
-            <Card className='flex flex-col  items-center w-[40%] h-[280px] shadow-lg gap-3.5 text-ellipsis overflow-hidden'>
-                <CardHeader className='flex flex-col w-full p-0'>
-                    <CardTitle className=' flex flex-col w-full'>
-                        <p className='text-md text-start w-full p-1'>{user?.pseudo}</p>
-                        <p className='text-xs text-center'>{user?.email}</p>
+    if (!user) return null;
+
+    return (
+        <div className="flex w-full max-w-lg flex-col items-center gap-6 py-8">
+            <Card className="flex w-full max-w-xs flex-col items-center gap-3 overflow-hidden">
+                <CardHeader className="w-full p-4 pb-0">
+                    <CardTitle className="text-center">
+                        <p className="truncate">{user.pseudo}</p>
+                        <p className="mt-1 truncate text-xs font-normal text-muted-foreground">{user.email}</p>
                     </CardTitle>
                 </CardHeader>
-                <CardContent className='rounded-full w-[150px] h-[150px] flex justify-center items-center border relative overflow-hidden'>
-                    <Image src={user?.avatar as string}
-                        alt={user?.pseudo as string}
-                        fill
-                        priority
-                        sizes="150px"
-                    />
+                <CardContent className="relative h-[120px] w-[120px] overflow-hidden rounded-full border border-border">
+                    <Image src={user.avatar as string} alt={user.pseudo as string} fill priority sizes="120px" className="object-cover" />
                 </CardContent>
-                <CardFooter className={(connected.role === "admin") ? 'flex flex-row h-[40px] m-0 p-0 text-xl items-center justify-center cursor-pointer' : "hidden"} onClick={() => handleClick()}>
-                    <div className='flex flex-row items-center justify-center h-full gap-2.5 m-2.5'>
-                        {user?.role}
+                {connected.role === "admin" && (
+                    <CardFooter className="cursor-pointer pb-4 capitalize text-muted-foreground hover:text-primary" onClick={() => handleClick()}>
+                        Rôle : {user.role}
+                    </CardFooter>
+                )}
+            </Card>
+
+            {open && (
+                <form className="surface-card flex w-full max-w-xs flex-col gap-4 p-6">
+                    <Label htmlFor="role">Modifier le rôle</Label>
+                    <select id="role" className="form-select" value={role} onChange={(e) => setRole(e.target.value)}>
+                        <option value="modo">Modo</option>
+                        <option value="user">User</option>
+                        <option value="new">New User</option>
+                    </select>
+                    <div className="flex flex-col gap-2 sm:flex-row">
+                        <Button type="button" variant="outline" className="flex-1" onClick={(e) => handleCancel(e)}>Annuler</Button>
+                        <Button type="button" className="flex-1" onClick={(e) => handleSubmit(e)}>Valider</Button>
                     </div>
-                </CardFooter>
-            </Card >
-            <form className={(open) ? 'flex flex-col items-center justify-center w-[40%]' : "hidden"}>
+                </form>
+            )}
 
-                <Label htmlFor='role' className='flex justify-center mt-3.5'>Choisir le genre : </Label>
-                <select id='role' className='w-[40%] mx-auto mb-3.5' value={role} onChange={(e) => setRole(e.target.value)}>
-                    <option value="modo">Modo</option>
-                    <option value="user">User</option>
-                    <option value="new">New User</option>
-
-                </select>
-                <div className='flex flex-row items-center justify-center w-full gap-3.5'>
-                    <button className='bg-red-500 text-white p-2.5 rounded mt-5 w-[40%]' onClick={(e) => handleCancel(e)}>annuler</button>
-                    <button className='bg-blue-500 text-white p-2.5 rounded mt-5 w-[40%]' onClick={(e) => handleSubmit(e)}>Valider</button>
-                </div>
-            </form >
-            <div>
-                {user?.downloaded.map((downloadBook: Download) => (
-                    <ul key={downloadBook.id}>
-                        <li>
-                            <ConvertisseurNom id={downloadBook.bookId} />  - {dayjs(downloadBook.createdAt).format("DD/MM/YYYY HH:mm:ss")}
-                        </li>
+            {user.downloaded.length > 0 && (
+                <section className="surface-card w-full p-4 sm:p-5">
+                    <h2 className="mb-3 font-serif text-lg">Historique des téléchargements</h2>
+                    <ul className="space-y-2 text-sm">
+                        {user.downloaded.map((downloadBook: Download) => (
+                            <li key={downloadBook.id} className="flex flex-col gap-0.5 border-b border-border/60 pb-2 sm:flex-row sm:justify-between">
+                                <ConvertisseurNom id={downloadBook.bookId} />
+                                <span className="text-muted-foreground">{dayjs(downloadBook.createdAt).format("DD/MM/YYYY HH:mm")}</span>
+                            </li>
+                        ))}
                     </ul>
-                ))}
-            </div>
-        </div >
+                </section>
+            )}
+        </div>
     );
 }
-
 
 export default Userid

@@ -7,52 +7,70 @@ import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
 import { useRouter } from 'next/navigation';
 import Url from "@/lib/Url";
-
+import { getAxiosErrorMessage } from "@/lib/getAxiosErrorMessage";
 
 type Inputs = {
     identifiant: string
     password: string
 }
-const LoginPage = () => {
 
+const LoginPage = () => {
     const navigate = useRouter();
     const {
         register,
         handleSubmit,
-        watch,
         formState: { errors },
     } = useForm<Inputs>();
+
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
         try {
             const connectUser = await axios.post(Url.connection, data, {
                 withCredentials: true,
             });
 
-            toast.success(`${connectUser.data}`);
+            toast.success(connectUser.data?.message ?? "Connexion réussie");
             setTimeout(() => {
                 navigate.push("/dashboard")
-            }, 2000);
-
-        } catch (error: any) {
-            toast.error(`Une erreur est survenue !`)
+            }, 1500);
+        } catch (error: unknown) {
+            toast.error(getAxiosErrorMessage(error, "Une erreur est survenue !"));
         }
-
     };
 
-
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-y-1.5 w-4/5 m-auto">
-            <Input type="text" placeholder="e-mail or pseudo" id="identifiant" autoComplete="off" className="rounded-none placeholder-red-400 pl-4" {...register("identifiant", { required: true })} />
-            {errors.identifiant && errors.identifiant.type === "required" && <span className="text-center text-red-700">Identifiant Obligatoire ! </span>}
+        <>
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 w-full">
+                <div>
+                    <Input
+                        type="text"
+                        placeholder="E-mail ou pseudo"
+                        autoComplete="username"
+                        aria-label="Identifiant"
+                        {...register("identifiant", { required: true })}
+                    />
+                    {errors.identifiant?.type === "required" && (
+                        <span className="mt-1 block text-center text-sm text-destructive">Identifiant obligatoire</span>
+                    )}
+                </div>
 
-            <Input type="password" placeholder="password" id="password" autoComplete="false" className="rounded-none" {...register("password", { required: true })} />
-            {errors.password && errors.password.type === "required" && <span className="text-center text-red-700">Mot de passe obligatoire !</span>}
+                <div>
+                    <Input
+                        type="password"
+                        placeholder="Mot de passe"
+                        autoComplete="current-password"
+                        aria-label="Mot de passe"
+                        {...register("password", { required: true })}
+                    />
+                    {errors.password?.type === "required" && (
+                        <span className="mt-1 block text-center text-sm text-destructive">Mot de passe obligatoire</span>
+                    )}
+                </div>
 
-            <Button type="submit" className="mt-2.5 bg-blue-400 hover:bg-blue-300 text-black w-[80%] mx-auto">Se connecter</Button>
-
-            <ToastContainer autoClose={2000} />
-        </form>
+                <Button type="submit" className="w-full">Se connecter</Button>
+            </form>
+            <ToastContainer theme="dark" autoClose={2000} />
+        </>
     )
 }
 
-export default LoginPage
+export default LoginPage;
