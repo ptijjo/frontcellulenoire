@@ -55,7 +55,9 @@
     cursor: pointer;
   }
 
-  img, video, svg {
+  img:not([data-nimg="fill"]),
+  video,
+  svg {
     display: block;
     height: auto;
     max-width: 100%;

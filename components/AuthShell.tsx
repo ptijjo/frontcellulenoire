@@ -14,14 +14,15 @@ export default function AuthShell({ children, title, subtitle, showHero = true }
     <main className="page-shell">
       <div className="page-content flex min-h-dvh flex-col lg:flex-row lg:items-center lg:gap-10 py-8 lg:py-12">
         {showHero && (
-          <aside className="hidden lg:flex lg:w-1/2 flex-col justify-center">
-            <div className="relative aspect-[4/5] w-full max-w-md overflow-hidden rounded-2xl border border-border shadow-2xl shadow-black/40">
+          <aside className="hidden w-full lg:flex lg:w-1/2 flex-col justify-center">
+            <div className="relative w-full max-w-md overflow-hidden rounded-2xl border border-border shadow-2xl shadow-black/40">
               <Image
                 src="/images/homepage.jpg"
                 alt="Bibliothèque Cellule noire"
-                fill
+                width={480}
+                height={600}
                 priority
-                className="object-cover opacity-90"
+                className="h-auto w-full object-cover opacity-90"
                 sizes="(max-width: 1024px) 0vw, 50vw"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
@@ -36,10 +37,15 @@ export default function AuthShell({ children, title, subtitle, showHero = true }
         )}
 
         <div className="flex w-full flex-col items-center lg:w-1/2">
-          <Link href="/" className="mb-6 block">
-            <div className="relative h-16 w-16 sm:h-20 sm:w-20 overflow-hidden rounded-full border-2 border-primary/30">
-              <Image src="/logos/logo.jpeg" alt="Logo Cellule noire" fill priority className="object-cover" sizes="80px" />
-            </div>
+          <Link href="/" className="mb-6 block shrink-0">
+            <Image
+              src="/logos/logo.jpeg"
+              alt="Logo Cellule noire"
+              width={80}
+              height={80}
+              priority
+              className="size-16 rounded-full border-2 border-primary/30 object-cover sm:size-20"
+            />
           </Link>
 
           {(title || subtitle) && (
