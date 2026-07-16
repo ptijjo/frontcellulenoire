@@ -21,9 +21,8 @@ export default function AuthShell({ children, title, subtitle, showHero = true }
                 alt="Bibliothèque Cellule noire"
                 width={480}
                 height={600}
-                priority
                 className="h-auto w-full object-cover opacity-90"
-                sizes="(max-width: 1024px) 0vw, 50vw"
+                sizes="(min-width: 1024px) 50vw, 0px"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
               <div className="absolute bottom-0 p-6">
