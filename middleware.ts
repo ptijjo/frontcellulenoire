@@ -1,12 +1,22 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
+/**
+ * Garde-fou optionnel : ne redirige que si le cookie session est partagé
+ * (COOKIE_DOMAIN=.cellulenoire.fr côté API) ET que le flag est activé.
+ *
+ * Sans ça, le JWT reste sur api.cellulenoire.fr et ce middleware
+ * provoquait une boucle 307 /dashboard → /?redirect=/dashboard.
+ * L’auth réelle reste dans app/dashboard/layout.tsx.
+ */
 export function middleware(request: NextRequest) {
-  const token = request.cookies.get("token");
-  const isDashboard = request.nextUrl.pathname.startsWith("/dashboard");
+  const enforce = process.env.COOKIE_MIDDLEWARE === "true";
+  if (!enforce) {
+    return NextResponse.next();
+  }
 
-  // En production, le cookie doit être partagé via COOKIE_DOMAIN=.cellulenoire.fr
-  // En développement, le layout client reste le filet de sécurité (cookie sur l'hôte API).
-  if (isDashboard && process.env.NODE_ENV === "production" && !token) {
+  const token = request.cookies.get("token");
+  if (request.nextUrl.pathname.startsWith("/dashboard") && !token) {
     const loginUrl = new URL("/", request.url);
     loginUrl.searchParams.set("redirect", request.nextUrl.pathname);
     return NextResponse.redirect(loginUrl);
