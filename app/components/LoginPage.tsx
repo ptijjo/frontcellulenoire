@@ -4,9 +4,9 @@ import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import axios from "axios";
 import { useRouter } from 'next/navigation';
 import Url from "@/lib/Url";
+import apiClient from "@/lib/apiClient";
 import { getAxiosErrorMessage } from "@/lib/getAxiosErrorMessage";
 
 type Inputs = {
@@ -24,10 +24,7 @@ const LoginPage = () => {
 
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
         try {
-            const connectUser = await axios.post(Url.connection, data, {
-                withCredentials: true,
-            });
-
+            const connectUser = await apiClient.post(Url.connection, data);
             toast.success(connectUser.data?.message ?? "Connexion réussie");
             setTimeout(() => {
                 navigate.push("/dashboard")

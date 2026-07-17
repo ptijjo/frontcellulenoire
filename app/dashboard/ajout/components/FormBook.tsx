@@ -4,7 +4,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Selector } from '@/lib/hooks'
 import Url from '@/lib/Url'
-import axios from 'axios'
+import apiClient from '@/lib/apiClient'
+import { getAxiosErrorMessage } from '@/lib/getAxiosErrorMessage'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
@@ -38,15 +39,10 @@ const FormBook = () => {
             formData.append("categoryName", data.categoryName);
             formData.append("author", data.author);
 
-            await axios.post(Url.addBooks, formData, {
-                withCredentials: true,
-            });
+            await apiClient.post(Url.addBooks, formData);
             navigate.push("/dashboard");
         } catch (error: unknown) {
-            const message = axios.isAxiosError(error)
-                ? (error.response?.data?.message as string) || "Une erreur s'est produite"
-                : "Une erreur s'est produite";
-            toast.error(message);
+            toast.error(getAxiosErrorMessage(error, "Une erreur s'est produite"));
         }
     };
 

@@ -3,7 +3,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import React, { useState } from 'react'
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import axios from "axios";
+import apiClient from "@/lib/apiClient";
 import Url from "@/lib/Url";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -26,7 +26,7 @@ const ForgetPassword = () => {
 
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
         try {
-            const response = await axios.post(Url.forgetPassword, {
+            const response = await apiClient.post(Url.forgetPassword, {
                 email: data.email
             });
 

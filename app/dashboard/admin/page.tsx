@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import apiClient from "@/lib/apiClient";
 import Url from "@/lib/Url";
 import { AdminDashboardStats } from "@/lib/Interface/admin.interface";
 import { getAxiosErrorMessage } from "@/lib/getAxiosErrorMessage";
@@ -28,7 +28,7 @@ const AdminDashboard = () => {
 
     const fetchStats = async () => {
         try {
-            const response = await axios.get(Url.adminDashboard, { withCredentials: true });
+            const response = await apiClient.get(Url.adminDashboard);
             setStats(response.data.data);
         } catch (error) {
             toast.error(getAxiosErrorMessage(error, "Impossible de charger le tableau de bord"));
@@ -43,7 +43,7 @@ const AdminDashboard = () => {
 
     const handleTogglePublish = async (bookId: string, isPublished: boolean) => {
         try {
-            await axios.patch(`${Url.booksPublish}/${bookId}`, { isPublished }, { withCredentials: true });
+            await apiClient.patch(`${Url.booksPublish}/${bookId}`, { isPublished });
             toast.success(isPublished ? "Livre republié" : "Livre masqué");
             fetchStats();
         } catch (error) {
@@ -53,7 +53,7 @@ const AdminDashboard = () => {
 
     const handleSetFeatured = async (bookId: string) => {
         try {
-            await axios.patch(`${Url.booksFeatured}/${bookId}`, {}, { withCredentials: true });
+            await apiClient.patch(`${Url.booksFeatured}/${bookId}`, {});
             toast.success("Sélection du moment mise à jour");
             fetchStats();
         } catch (error) {

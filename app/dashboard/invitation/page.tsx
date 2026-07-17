@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { getAxiosErrorMessage } from '@/lib/getAxiosErrorMessage';
 import Url from '@/lib/Url';
-import axios from 'axios';
+import apiClient from '@/lib/apiClient';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
@@ -24,9 +24,7 @@ const Invitation = () => {
 
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
         try {
-            await axios.post(Url.userById, data, {
-                withCredentials: true,
-            });
+            await apiClient.post(Url.userById, data);
 
             setMessage(`Invitation envoyée à ${data.email}`);
 

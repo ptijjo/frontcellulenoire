@@ -6,8 +6,8 @@ import { fonctionConvertisseur } from '@/lib/ConvertisseurID';
 import { Book } from '@/lib/Interface/book.interface';
 import { getAxiosErrorMessage } from '@/lib/getAxiosErrorMessage';
 import Url from '@/lib/Url';
+import apiClient from '@/lib/apiClient';
 import { toast } from 'react-toastify';
-import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
@@ -22,9 +22,7 @@ const UpdateBook = ({ params }: { params: { id: string } }) => {
   useEffect(() => {
     const getUpdateBook = async (bookId: string) => {
       try {
-        const getBook = await axios.get(`${Url.getBooks}/${bookId}`, {
-          withCredentials: true,
-        });
+        const getBook = await apiClient.get(`${Url.getBooks}/${bookId}`);
         setTitle(getBook.data.data.title);
         setAuthor(getBook.data.data.author);
         const convertion = await fonctionConvertisseur(getBook.data.data.categoryId);
@@ -40,12 +38,10 @@ const UpdateBook = ({ params }: { params: { id: string } }) => {
     e.preventDefault();
 
     try {
-      await axios.put(`${Url.getBooks}/${id}`, {
+      await apiClient.put(`${Url.getBooks}/${id}`, {
         title,
         author,
         categorie: category,
-      }, {
-        withCredentials: true,
       });
 
       navigate.push("/dashboard");

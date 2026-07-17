@@ -1,7 +1,7 @@
-"use Client"
-import axios from 'axios';
+"use client"
 import React, { useEffect, useState } from 'react';
 import Url from './Url';
+import apiClient from './apiClient';
 
 interface idCategory {
     id: string;
@@ -11,26 +11,17 @@ const ConvertisseurID: React.FC<idCategory> = ({ id }) => {
     const [nom, setNom] = useState("");
 
     useEffect(() => {
-        axios.get(`${Url.getCategory}/${id}`, {
-           withCredentials: true,
-        }).then(response => {
+        apiClient.get(`${Url.getCategory}/${id}`).then(response => {
             setNom(response.data.data.type);
         }).catch(() => undefined);
     }, [id]);
 
-    return (
-        <>
-            {nom}
-        </>
-    )
+    return <>{nom}</>;
 };
 
 export const fonctionConvertisseur = async (id: string): Promise<string> => {
-    const catgeorie = await axios.get(`${Url.getCategory}/${id}`, {
-        withCredentials: true,
-    });
+    const categorie = await apiClient.get(`${Url.getCategory}/${id}`);
+    return categorie.data.data.type;
+};
 
-    return catgeorie.data.data.type;
-}
-
-export default ConvertisseurID
+export default ConvertisseurID;

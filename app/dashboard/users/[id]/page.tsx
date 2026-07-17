@@ -2,7 +2,7 @@
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { User, Download } from '@/lib/Interface/user.interface';
 import Url from '@/lib/Url';
-import axios from 'axios';
+import apiClient from '@/lib/apiClient';
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image';
 import { Label } from '@/components/ui/label';
@@ -25,8 +25,7 @@ const Userid = ({ params }: { params: { id: string } }) => {
 
     useEffect(() => {
         const fetchUser = async (userId: string): Promise<User> => {
-            const response = await axios.get(Url.userById + "/" + userId, {
-                withCredentials: true,
+            const response = await apiClient.get(Url.userById + "/" + userId, {
                 params: { id: userId }
             });
             setUser(response.data.data);
@@ -49,7 +48,7 @@ const Userid = ({ params }: { params: { id: string } }) => {
     const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
         try {
-            await axios.put(Url.updateRole + "/" + id, { role }, { withCredentials: true });
+            await apiClient.put(Url.updateRole + "/" + id, { role });
             navigate.push("/dashboard/users");
         } catch (error: unknown) {
             toast.error(getAxiosErrorMessage(error));

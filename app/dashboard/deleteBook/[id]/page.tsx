@@ -7,8 +7,8 @@ import { Dispatch } from '@/lib/hooks';
 import { Book } from '@/lib/Interface/book.interface';
 import { getAxiosErrorMessage } from '@/lib/getAxiosErrorMessage';
 import Url from '@/lib/Url';
+import apiClient from '@/lib/apiClient';
 import { toast } from 'react-toastify';
-import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 
@@ -21,9 +21,7 @@ const DeleteBook = ({ params }: { params: { id: string } }) => {
   useEffect(() => {
     const getUpdateBook = async (bookId: string) => {
       try {
-        const getBook = await axios.get(`${Url.getBooks}/${bookId}`, {
-          withCredentials: true,
-        });
+        const getBook = await apiClient.get(`${Url.getBooks}/${bookId}`);
         setBook(getBook.data.data);
       } catch (error) {
         toast.error(getAxiosErrorMessage(error));

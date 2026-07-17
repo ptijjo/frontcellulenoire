@@ -1,7 +1,7 @@
 "use client"
 import { Input } from '@/components/ui/input'
 import React, { useEffect, useState } from 'react'
-import axios from 'axios';
+import apiClient from '@/lib/apiClient';
 import Url from '@/lib/Url';
 import { User } from '@/lib/Interface/user.interface';
 import { PaginationMeta } from '@/lib/Interface/pagination.interface';
@@ -30,8 +30,7 @@ const Users = () => {
 
     useEffect(() => {
         const fetchUsers = async () => {
-            const response = await axios.get(Url.userById, {
-                withCredentials: true,
+            const response = await apiClient.get(Url.userById, {
                 params: { search: debouncedSearch, page, itemPerPage }
             });
             setUsers(response.data.data);

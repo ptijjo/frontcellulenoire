@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { getBooks, selectBokkStatus, selectBook, selectBookPagination } from '@/lib/features/books/bookSlice';
 import { Book, BookHomeOverview } from '@/lib/Interface/book.interface';
 import { Input } from '@/components/ui/input';
-import { FaDownload, FaEye, FaEyeSlash, FaStar } from 'react-icons/fa';
+import { FaEye, FaEyeSlash, FaStar } from 'react-icons/fa';
 import { MdDeleteForever, MdMode } from 'react-icons/md';
 import { useRouter } from 'next/navigation';
 import Loading from './loading';
@@ -18,7 +18,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import PaginationControls from '@/components/PaginationControls';
 import { useDebounce } from '@/lib/hooks/useDebounce';
-import axios from 'axios';
+import apiClient from '@/lib/apiClient';
 import Url from '@/lib/Url';
 import { getAxiosErrorMessage } from '@/lib/getAxiosErrorMessage';
 import { trackEvent } from '@/lib/analytics';
@@ -42,6 +42,7 @@ const Dashboard = () => {
     const navigate = useRouter();
     const dispatch = Dispatch();
     const isStaff = isStaffRole(user?.role);
+    const canDownload = !(user?.role === "new" && user?.download >= 1);
 
     const handleCategoryFiltre = (event: React.ChangeEvent<HTMLInputElement>) => {
         setFiltre(event.target.value);
@@ -68,7 +69,7 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchOverview = async () => {
             try {
-                const response = await axios.get(Url.booksHome, { withCredentials: true });
+                const response = await apiClient.get(Url.booksHome);
                 setOverview(response.data.data);
             } catch {
                 setOverview(null);
@@ -91,7 +92,7 @@ const Dashboard = () => {
 
     const handleTogglePublish = async (bookId: string, isPublished: boolean) => {
         try {
-            await axios.patch(`${Url.booksPublish}/${bookId}`, { isPublished: !isPublished }, { withCredentials: true });
+            await apiClient.patch(`${Url.booksPublish}/${bookId}`, { isPublished: !isPublished });
             toast.success(!isPublished ? "Livre republié" : "Livre masqué");
             dispatch(getBooks({ search: debouncedSearch, filtre, page, itemPerPage }));
         } catch (error) {
@@ -101,9 +102,9 @@ const Dashboard = () => {
 
     const handleSetFeatured = async (bookId: string) => {
         try {
-            await axios.patch(`${Url.booksFeatured}/${bookId}`, {}, { withCredentials: true });
+            await apiClient.patch(`${Url.booksFeatured}/${bookId}`, {});
             toast.success("Sélection du moment mise à jour");
-            const response = await axios.get(Url.booksHome, { withCredentials: true });
+            const response = await apiClient.get(Url.booksHome);
             setOverview(response.data.data);
         } catch (error) {
             toast.error(getAxiosErrorMessage(error));
@@ -160,58 +161,73 @@ const Dashboard = () => {
             )}
 
             <div className="grid w-full grid-cols-2 place-items-center gap-4 sm:grid-cols-3 md:grid-cols-4 lg:gap-6">
-                {books?.map((book: Book) => (
-                    <div
-                        className={`group relative flex flex-col items-center pb-10 ${book.isPublished === false ? "opacity-60" : ""}`}
-                        key={book.id}
-                    >
-                        {book.isPublished === false && (
-                            <span className="badge-hidden absolute right-0 top-0 z-10">Masqué</span>
-                        )}
-                        {book.isFeatured && (
-                            <span className="badge-featured absolute left-0 top-0 z-10">Sélection</span>
-                        )}
-                        <BookCard title={book.title} author={book.author} category={getCategoryLabel(book)} />
-                        <div className="absolute bottom-0 flex items-center gap-2 text-lg text-muted-foreground">
-                            {book.isPublished !== false && (
-                                <button
-                                    type="button"
-                                    onClick={() => downloadBook(book.id, book.title, getCategoryLabel(book))}
-                                    className="rounded p-1 transition-colors hover:text-primary"
-                                    aria-label={`Télécharger ${book.title}`}
-                                >
-                                    <FaDownload />
-                                </button>
+                {books?.map((book: Book) => {
+                    const published = book.isPublished !== false;
+                    return (
+                        <div
+                            className={`group relative flex flex-col items-center ${isStaff ? "pb-10" : ""} ${!published ? "opacity-60" : ""}`}
+                            key={book.id}
+                        >
+                            {!published && (
+                                <span className="badge-hidden absolute right-0 top-0 z-10">Masqué</span>
                             )}
+                            {book.isFeatured && (
+                                <span className="badge-featured absolute left-0 top-0 z-10">Sélection</span>
+                            )}
+                            <BookCard
+                                title={book.title}
+                                author={book.author}
+                                category={getCategoryLabel(book)}
+                                onClick={
+                                    published && canDownload
+                                        ? () => downloadBook(book.id, book.title, getCategoryLabel(book))
+                                        : undefined
+                                }
+                                disabled={published && !canDownload}
+                            />
                             {isStaff && (
-                                <>
+                                <div className="absolute bottom-0 flex items-center gap-2 text-lg text-muted-foreground">
                                     <button
                                         type="button"
-                                        onClick={() => handleTogglePublish(book.id, book.isPublished !== false)}
+                                        onClick={() => handleTogglePublish(book.id, published)}
                                         className="rounded p-1 transition-colors hover:text-primary"
-                                        aria-label="Modérer"
+                                        aria-label={published ? "Masquer le livre" : "Publier le livre"}
+                                        title={published ? "Masquer" : "Publier"}
                                     >
-                                        {book.isPublished === false ? <FaEye className="text-green-500" /> : <FaEyeSlash className="text-orange-400" />}
+                                        {!published ? <FaEye className="text-green-500" /> : <FaEyeSlash className="text-orange-400" />}
                                     </button>
                                     <button
                                         type="button"
                                         onClick={() => handleSetFeatured(book.id)}
                                         className="rounded p-1 transition-colors hover:text-primary"
                                         aria-label="Mettre en avant"
+                                        title="Sélection du moment"
                                     >
                                         <FaStar className={book.isFeatured ? "text-primary" : "text-muted-foreground"} />
                                     </button>
-                                    <button type="button" onClick={() => handleUpdate(book.id)} className="rounded p-1 transition-colors hover:text-primary" aria-label="Modifier">
+                                    <button
+                                        type="button"
+                                        onClick={() => handleUpdate(book.id)}
+                                        className="rounded p-1 transition-colors hover:text-primary"
+                                        aria-label="Modifier"
+                                        title="Modifier"
+                                    >
                                         <MdMode />
                                     </button>
-                                    <button type="button" onClick={() => handleDelete(book.id)} className="rounded p-1 transition-colors hover:text-destructive" aria-label="Supprimer">
+                                    <button
+                                        type="button"
+                                        onClick={() => handleDelete(book.id)}
+                                        className="rounded p-1 transition-colors hover:text-destructive"
+                                        aria-label="Supprimer"
+                                        title="Supprimer"
+                                    >
                                         <MdDeleteForever />
                                     </button>
-                                </>
+                                </div>
                             )}
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
 
             {books.length > 0 && (

@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import axios from "axios";
+import apiClient from "@/lib/apiClient";
 import Url from "@/lib/Url";
 import { useRouter } from "next/navigation";
 import AuthShell from "@/components/AuthShell";
@@ -37,7 +37,7 @@ const ResetPassword = ({ params }: { params: { id: string } }) => {
         }
 
         try {
-            const newPassword = await axios.put(Url.resetPassword + "/" + id, {
+            const newPassword = await apiClient.put(Url.resetPassword + "/" + id, {
                 password: data.password
             });
 

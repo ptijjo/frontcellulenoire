@@ -3,10 +3,11 @@ import React, { useState } from 'react'
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import axios from 'axios';
+import apiClient from '@/lib/apiClient';
 import Url from '@/lib/Url';
 import { useRouter } from 'next/navigation';
 import AuthShell from '@/components/AuthShell';
+import { getAxiosErrorMessage } from '@/lib/getAxiosErrorMessage';
 
 type Inputs = {
     password: string;
@@ -34,10 +35,11 @@ const Enregistrement = ({ params }: { params: { id: string } }) => {
         }
 
         try {
-            await axios.post(Url.createUser + "/" + id, { password: data.password });
+            await apiClient.post(Url.createUser + "/" + id, { password: data.password });
             navigate.push("/");
         } catch (error: unknown) {
-            console.error(error);
+            setErrorMessage(getAxiosErrorMessage(error, "Une erreur est survenue"));
+            window.setTimeout(() => setErrorMessage(""), 3000);
         }
     };
 
