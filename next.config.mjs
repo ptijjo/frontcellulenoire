@@ -2,6 +2,8 @@
 const nextConfig = {
   output: 'standalone',
   images: {
+    // Sans sharp : next/image sert les images telles quelles (pas d'opti serveur)
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'http',
