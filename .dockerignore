@@ -1,0 +1,16 @@
+Dockerfile
+.dockerignore
+.git
+.github
+.gitignore
+.next
+node_modules
+npm-debug.log*
+README.md
+.env
+.env.*
+!.env.example
+*.md
+tsconfig.tsbuildinfo
+.vercel
+coverage
