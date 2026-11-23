@@ -38,12 +38,12 @@ const MenuHeader: React.FC<HeaderProps> = ({ pseudo, id, avatar, role }) => {
     return (
         <Menubar className="border-none bg-transparent shadow-none">
             <MenubarMenu>
-                <MenubarTrigger className="flex cursor-pointer items-center gap-2 rounded-lg border border-border bg-secondary/50 px-2 py-1.5 text-sm sm:gap-3 sm:px-3">
-                    <Avatar className="h-8 w-8 sm:h-9 sm:w-9">
-                        <AvatarImage src={avatar} alt="Profil" />
-                        <AvatarFallback className="bg-muted text-muted-foreground">CN</AvatarFallback>
+                <MenubarTrigger className="flex cursor-pointer items-center gap-2 rounded-md px-1.5 py-1 text-sm data-[state=open]:bg-secondary">
+                    <Avatar className="h-8 w-8 shrink-0">
+                        <AvatarImage src={avatar} alt="" />
+                        <AvatarFallback className="bg-muted text-xs text-muted-foreground">CN</AvatarFallback>
                     </Avatar>
-                    <p className="max-w-[100px] truncate sm:max-w-[160px]">{pseudo}</p>
+                    <p className="max-w-[8rem] truncate sm:max-w-[12rem]" title={pseudo}>{pseudo}</p>
                     {role === 'admin' && <FaShield className="shrink-0 text-red-500" />}
                     {role === 'modo' && <FaShield className="shrink-0 text-primary" />}
                 </MenubarTrigger>

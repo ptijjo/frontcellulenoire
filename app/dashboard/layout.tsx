@@ -31,10 +31,10 @@ const layout = ({ children }: { children: React.ReactNode }) => {
     }
 
     return (
-        <div className="page-shell min-h-dvh pb-8">
-            <div className="page-content flex flex-col gap-4 sm:gap-6">
+        <div className="page-shell min-h-dvh pb-16">
+            <div className="page-content flex flex-col">
                 <Header pseudo={user?.pseudo} id={user?.id} avatar={user?.avatar} role={user?.role} />
-                <main className="flex w-full flex-col items-center gap-4 sm:gap-6 px-1 sm:px-2">
+                <main className="flex w-full flex-col items-stretch gap-8 py-8">
                     {children}
                 </main>
             </div>

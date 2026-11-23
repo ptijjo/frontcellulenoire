@@ -55,13 +55,6 @@ const Dashboard = () => {
         setPage(1);
     };
 
-    const handleCategoryFromOverview = (category: string) => {
-        setFiltre(category);
-        setPage(1);
-        const radio = document.querySelector(`input[name="categorie"][value="${category}"]`) as HTMLInputElement | null;
-        if (radio) radio.checked = true;
-    };
-
     useEffect(() => {
         dispatch(getBooks({ search: debouncedSearch, filtre, page, itemPerPage }));
     }, [debouncedSearch, filtre, page, dispatch, itemPerPage]);
@@ -118,75 +111,78 @@ const Dashboard = () => {
     const showOverview = !debouncedSearch && !filtre && page === 1;
 
     return (
-        <div className="flex w-full max-w-5xl flex-col items-center gap-5 sm:gap-6">
-            <h1 className="text-center font-serif text-2xl sm:text-3xl">Bibliothèque cellule noire</h1>
+        <div className="flex w-full max-w-6xl flex-col items-stretch gap-8">
+            <div className="flex flex-col gap-2">
+                <h1 className="font-serif text-3xl sm:text-4xl">La bibliothèque</h1>
+                {user && <WelcomeBanner user={user} />}
+            </div>
 
-            {user && <WelcomeBanner user={user} />}
+            {showOverview && <HomeOverviewSection overview={overview} />}
 
-            {showOverview && (
-                <HomeOverviewSection
-                    overview={overview}
-                    onCategorySelect={handleCategoryFromOverview}
-                    activeCategory={filtre}
-                />
-            )}
+            <div className="flex flex-col gap-4">
+                <label className="flex w-full max-w-xl flex-col gap-1.5 text-sm text-muted-foreground" htmlFor="book-search">
+                    Recherche
+                    <Input
+                        id="book-search"
+                        type="search"
+                        placeholder="Titre ou auteur"
+                        className="w-full"
+                        value={search}
+                        onChange={handleSearchChange}
+                    />
+                </label>
 
-            <Input
-                type="search"
-                placeholder="Rechercher un ouvrage…"
-                className="w-full max-w-md"
-                value={search}
-                onChange={handleSearchChange}
-                aria-label="Recherche"
-            />
-
-            <fieldset className="filter-radio flex w-full max-w-2xl flex-wrap justify-center gap-2">
-                {categoryFilters.map((value) => (
-                    <label key={value || "all"}>
-                        <input
-                            type="radio"
-                            name="categorie"
-                            value={value}
-                            defaultChecked={value === ""}
-                            onChange={handleCategoryFiltre}
-                        />
-                        {value === "" ? "Tout" : (categoryLabels[value] ?? value)}
-                    </label>
-                ))}
-            </fieldset>
+                <fieldset className="filter-radio flex w-full flex-wrap gap-1">
+                    <legend className="sr-only">Catégorie</legend>
+                    {categoryFilters.map((value) => (
+                        <label key={value || "all"}>
+                            <input
+                                type="radio"
+                                name="categorie"
+                                value={value}
+                                defaultChecked={value === ""}
+                                onChange={handleCategoryFiltre}
+                            />
+                            {value === "" ? "Tout" : (categoryLabels[value] ?? value)}
+                        </label>
+                    ))}
+                </fieldset>
+            </div>
 
             {(statusBook === "loading" || statusBook === "idle") && <Loading />}
             {(books?.length === 0 && statusBook === "success") && (
-                <p className="text-muted-foreground">Pas de livres disponibles.</p>
+                <p className="text-sm text-muted-foreground">Aucun livre ne correspond à cette recherche.</p>
             )}
 
-            <div className="grid w-full grid-cols-2 place-items-center gap-4 sm:grid-cols-3 md:grid-cols-4 lg:gap-6">
+            <div className="grid w-full grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                 {books?.map((book: Book) => {
                     const published = book.isPublished !== false;
                     return (
                         <div
-                            className={`group relative flex flex-col items-center ${isStaff ? "pb-10" : ""} ${!published ? "opacity-60" : ""}`}
+                            className={`flex min-w-0 flex-col gap-2 ${!published ? "opacity-60" : ""}`}
                             key={book.id}
                         >
-                            {!published && (
-                                <span className="badge-hidden absolute right-0 top-0 z-10">Masqué</span>
-                            )}
-                            {book.isFeatured && (
-                                <span className="badge-featured absolute left-0 top-0 z-10">Sélection</span>
-                            )}
-                            <BookCard
-                                title={book.title}
-                                author={book.author}
-                                category={getCategoryLabel(book)}
-                                onClick={
-                                    published && canDownload
-                                        ? () => downloadBook(book.id, book.title, getCategoryLabel(book))
-                                        : undefined
-                                }
-                                disabled={published && !canDownload}
-                            />
+                            <div className="relative">
+                                {!published && (
+                                    <span className="badge-hidden absolute right-2 top-2 z-10">Masqué</span>
+                                )}
+                                {book.isFeatured && (
+                                    <span className="badge-featured absolute left-2 top-2 z-10">Sélection</span>
+                                )}
+                                <BookCard
+                                    title={book.title}
+                                    author={book.author}
+                                    category={getCategoryLabel(book)}
+                                    onClick={
+                                        published && canDownload
+                                            ? () => downloadBook(book.id, book.title, getCategoryLabel(book))
+                                            : undefined
+                                    }
+                                    disabled={published && !canDownload}
+                                />
+                            </div>
                             {isStaff && (
-                                <div className="absolute bottom-0 flex items-center gap-2 text-lg text-muted-foreground">
+                                <div className="flex items-center justify-center gap-1 text-base text-muted-foreground">
                                     <button
                                         type="button"
                                         onClick={() => handleTogglePublish(book.id, published)}
@@ -194,7 +190,7 @@ const Dashboard = () => {
                                         aria-label={published ? "Masquer le livre" : "Publier le livre"}
                                         title={published ? "Masquer" : "Publier"}
                                     >
-                                        {!published ? <FaEye className="text-green-500" /> : <FaEyeSlash className="text-orange-400" />}
+                                        {!published ? <FaEye className="text-primary" /> : <FaEyeSlash />}
                                     </button>
                                     <button
                                         type="button"

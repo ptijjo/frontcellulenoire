@@ -4,26 +4,27 @@
 
 @layer base {
   :root {
-    --background: 30 8% 6%;
-    --foreground: 40 20% 92%;
-    --card: 30 10% 11%;
-    --card-foreground: 40 18% 92%;
-    --popover: 30 10% 11%;
-    --popover-foreground: 40 18% 92%;
-    --primary: 38 38% 58%;
-    --primary-foreground: 30 12% 8%;
-    --secondary: 30 8% 16%;
-    --secondary-foreground: 40 15% 88%;
-    --muted: 30 7% 14%;
-    --muted-foreground: 35 10% 58%;
-    --accent: 38 38% 58%;
-    --accent-foreground: 30 12% 8%;
-    --destructive: 0 55% 48%;
-    --destructive-foreground: 40 20% 95%;
-    --border: 30 8% 22%;
-    --input: 30 8% 20%;
-    --ring: 38 38% 58%;
-    --radius: 0.625rem;
+    --background: 30 12% 6%;
+    --foreground: 40 24% 92%;
+    --card: 30 10% 9%;
+    --card-foreground: 40 20% 92%;
+    --popover: 30 12% 8%;
+    --popover-foreground: 40 20% 92%;
+    --primary: 38 28% 64%;
+    --primary-foreground: 30 14% 8%;
+    --secondary: 30 8% 13%;
+    --secondary-foreground: 40 16% 88%;
+    --muted: 30 8% 12%;
+    --muted-foreground: 35 8% 62%;
+    --accent: 38 28% 64%;
+    --accent-foreground: 30 14% 8%;
+    --destructive: 4 52% 46%;
+    --destructive-foreground: 40 24% 96%;
+    --border: 32 8% 18%;
+    --input: 32 8% 18%;
+    --ring: 38 28% 64%;
+    --radius: 0.5rem;
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   }
 }
 
@@ -52,11 +53,31 @@
   }
 
   a:visited {
-    @apply text-foreground;
+    color: inherit;
   }
 
   a:hover {
     cursor: pointer;
+  }
+
+  button,
+  [role="button"] {
+    transition:
+      transform 140ms var(--ease-out),
+      background-color 160ms ease,
+      color 160ms ease,
+      border-color 160ms ease,
+      opacity 160ms ease;
+  }
+
+  button:active,
+  [role="button"]:active {
+    transform: scale(0.98);
+  }
+
+  ::selection {
+    background: hsl(var(--primary) / 0.28);
+    color: hsl(var(--foreground));
   }
 
   img:not([data-nimg="fill"]),
@@ -78,11 +99,11 @@
   }
 
   .surface-card {
-    @apply rounded-xl border border-border bg-card text-card-foreground shadow-lg shadow-black/20;
+    @apply rounded-lg border border-border bg-card text-card-foreground;
   }
 
   .surface-muted {
-    @apply rounded-lg border border-border bg-muted/60;
+    @apply rounded-lg border border-border bg-muted/50;
   }
 
   .text-gold {
@@ -98,23 +119,23 @@
   }
 
   .category-pill {
-    @apply rounded-full border border-border bg-secondary/80 px-3 py-1.5 text-xs sm:text-sm text-foreground transition-colors hover:border-primary/50 hover:bg-secondary;
+    @apply rounded-md px-2.5 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground;
   }
 
   .category-pill-active {
-    @apply border-primary bg-primary/15 text-primary;
+    @apply bg-secondary text-foreground;
   }
 
   .form-select {
-    @apply w-full rounded-md border border-input bg-secondary/40 px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring;
+    @apply w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring;
   }
 
   .filter-radio label {
-    @apply flex cursor-pointer items-center gap-1.5 rounded-full border border-border px-2.5 py-1 text-[10px] sm:text-sm text-muted-foreground transition-colors hover:border-primary/40;
+    @apply flex cursor-pointer items-center rounded-md px-2.5 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground;
   }
 
   .filter-radio label:has(input:checked) {
-    @apply border-primary bg-primary/15 text-primary;
+    @apply bg-secondary text-foreground;
   }
 
   .filter-radio input {
@@ -122,7 +143,7 @@
   }
 
   .badge-muted {
-    @apply rounded px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide;
+    @apply rounded px-1.5 py-0.5 text-[11px] font-medium;
   }
 
   .badge-hidden {
@@ -134,55 +155,61 @@
   }
 }
 
-/* Loader */
-.lds-roller,
-.lds-roller div,
-.lds-roller div:after {
-  box-sizing: border-box;
-}
-
 .lds-roller {
   display: inline-block;
-  position: relative;
-  width: 40px;
-  height: 40px;
-  color: hsl(var(--primary));
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid hsl(var(--border));
+  border-top-color: hsl(var(--primary));
+  border-radius: 999px;
+  animation: shelf-spin 0.7s linear infinite;
 }
 
 .lds-roller div {
-  animation: lds-roller 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-  transform-origin: 40px 40px;
+  display: none;
 }
 
-.lds-roller div:after {
-  content: " ";
-  display: block;
-  position: absolute;
-  width: 7.2px;
-  height: 7.2px;
-  border-radius: 50%;
-  background: currentColor;
-  margin: -3.6px 0 0 -3.6px;
+@keyframes shelf-spin {
+  to { transform: rotate(360deg); }
 }
 
-.lds-roller div:nth-child(1) { animation-delay: -0.036s; }
-.lds-roller div:nth-child(1):after { top: 62.62742px; left: 62.62742px; }
-.lds-roller div:nth-child(2) { animation-delay: -0.072s; }
-.lds-roller div:nth-child(2):after { top: 67.71281px; left: 56px; }
-.lds-roller div:nth-child(3) { animation-delay: -0.108s; }
-.lds-roller div:nth-child(3):after { top: 70.90963px; left: 48.28221px; }
-.lds-roller div:nth-child(4) { animation-delay: -0.144s; }
-.lds-roller div:nth-child(4):after { top: 72px; left: 40px; }
-.lds-roller div:nth-child(5) { animation-delay: -0.18s; }
-.lds-roller div:nth-child(5):after { top: 70.90963px; left: 31.71779px; }
-.lds-roller div:nth-child(6) { animation-delay: -0.216s; }
-.lds-roller div:nth-child(6):after { top: 67.71281px; left: 24px; }
-.lds-roller div:nth-child(7) { animation-delay: -0.252s; }
-.lds-roller div:nth-child(7):after { top: 62.62742px; left: 17.37258px; }
-.lds-roller div:nth-child(8) { animation-delay: -0.288s; }
-.lds-roller div:nth-child(8):after { top: 56px; left: 12.28719px; }
+@media (hover: hover) and (pointer: fine) {
+  .book-cover[role="button"]:hover {
+    transform: translateY(-2px);
+  }
+}
 
-@keyframes lds-roller {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+.book-cover[role="button"]:active {
+  transform: scale(0.98);
+}
+
+.book-cover {
+  transition: transform 150ms var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .lds-roller,
+  .book-cover {
+    animation: none;
+    transition: none;
+  }
+
+  .book-cover[role="button"]:hover,
+  .book-cover[role="button"]:active {
+    transform: none;
+  }
+
+  button,
+  [role="button"] {
+    transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease, opacity 160ms ease;
+  }
+
+  button:active,
+  [role="button"]:active {
+    transform: none;
+  }
 }

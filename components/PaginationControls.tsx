@@ -12,10 +12,11 @@ interface PaginationControlsProps {
 }
 
 function getDisplayedRange(pagination: PaginationMeta): string {
-    if (pagination.total === 0) return "0 résultat";
+    if (pagination.total === 0) return "0 livre";
     const start = (pagination.page - 1) * pagination.itemPerPage + 1;
     const end = Math.min(pagination.page * pagination.itemPerPage, pagination.total);
-    return `${start} - ${end} sur ${pagination.total}`;
+    const noun = pagination.total > 1 ? "livres" : "livre";
+    return `${start}–${end} sur ${pagination.total} ${noun}`;
 }
 
 export default function PaginationControls({

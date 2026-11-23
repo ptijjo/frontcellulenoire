@@ -3,6 +3,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import React, { useState } from 'react'
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import apiClient from "@/lib/apiClient";
 import Url from "@/lib/Url";
@@ -65,41 +66,51 @@ const ResetPassword = ({ params }: { params: { id: string } }) => {
             subtitle="Choisissez un mot de passe sécurisé pour votre compte."
             showHero={false}
         >
-            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-                <div>
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5" noValidate>
+                <div className="flex flex-col gap-1.5">
+                    <Label htmlFor="password">Nouveau mot de passe</Label>
                     <Input
+                        id="password"
                         type="password"
-                        placeholder="Nouveau mot de passe"
                         autoComplete="new-password"
+                        spellCheck={false}
+                        aria-invalid={errors.password ? true : undefined}
+                        aria-describedby="password-hint"
                         {...register("password", { required: true, pattern: PASSWORD_PATTERN })}
                     />
+                    <p id="password-hint" className="text-xs leading-relaxed text-muted-foreground">
+                        8 à 16 caractères, avec une majuscule, un chiffre et un symbole parmi @ $ ! % * ? &.
+                    </p>
                     {errors.password?.type === "required" && (
-                        <span className="mt-1 block text-center text-sm text-destructive">Mot de passe obligatoire</span>
+                        <p className="text-sm text-destructive" role="alert">Indiquez un mot de passe.</p>
                     )}
                     {errors.password?.type === "pattern" && (
-                        <span className="mt-1 block text-center text-xs text-destructive">
-                            8 à 16 caractères, une majuscule, un chiffre et un symbole.
-                        </span>
+                        <p className="text-sm text-destructive" role="alert">
+                            Ce mot de passe ne respecte pas les règles ci-dessus.
+                        </p>
                     )}
                 </div>
 
-                <div>
+                <div className="flex flex-col gap-1.5">
+                    <Label htmlFor="password2">Confirmation</Label>
                     <Input
+                        id="password2"
                         type="password"
-                        placeholder="Confirmer le mot de passe"
                         autoComplete="new-password"
+                        spellCheck={false}
+                        aria-invalid={errors.password2 ? true : undefined}
                         {...register("password2", { required: true })}
                     />
                     {errors.password2?.type === "required" && (
-                        <span className="mt-1 block text-center text-sm text-destructive">Confirmation obligatoire</span>
+                        <p className="text-sm text-destructive" role="alert">Confirmez le mot de passe.</p>
                     )}
                 </div>
 
-                {erreur && <p className="text-center text-sm text-destructive">{erreur}</p>}
+                {erreur && <p className="text-sm text-destructive" role="alert">{erreur}</p>}
 
                 <Button type="submit" className="w-full">Enregistrer</Button>
             </form>
-            <Link href="/" className="mt-4 block text-center text-sm text-primary hover:underline">
+            <Link href="/" className="mt-5 block text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">
                 Retour à la connexion
             </Link>
         </AuthShell>

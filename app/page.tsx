@@ -5,13 +5,13 @@ import AuthShell from "@/components/AuthShell";
 export default function Home() {
   return (
     <AuthShell
-      title="Bienvenue"
-      subtitle="Connectez-vous pour accéder à la bibliothèque privée."
+      title="Connexion"
+      subtitle="La bibliothèque est réservée aux membres."
     >
       <LoginPage />
       <Link
         href="/forgetPassword"
-        className="mt-4 block text-center text-sm text-primary hover:underline"
+        className="mt-5 block text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
       >
         Mot de passe oublié ?
       </Link>

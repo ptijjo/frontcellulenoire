@@ -2,6 +2,7 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from 'next/navigation';
@@ -19,53 +20,63 @@ const LoginPage = () => {
     const {
         register,
         handleSubmit,
-        formState: { errors },
+        formState: { errors, isSubmitting },
     } = useForm<Inputs>();
 
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
         try {
-            const connectUser = await apiClient.post(Url.connection, data);
-            toast.success(connectUser.data?.message ?? "Connexion réussie");
-            setTimeout(() => {
-                navigate.push("/dashboard")
-            }, 1500);
+            await apiClient.post(Url.connection, data);
+            navigate.push("/dashboard");
         } catch (error: unknown) {
-            toast.error(getAxiosErrorMessage(error, "Une erreur est survenue !"));
+            toast.error(getAxiosErrorMessage(error, "Identifiant ou mot de passe incorrect."));
         }
     };
 
     return (
         <>
-            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 w-full">
-                <div>
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5" noValidate>
+                <div className="flex flex-col gap-1.5">
+                    <Label htmlFor="identifiant">Identifiant</Label>
                     <Input
+                        id="identifiant"
                         type="text"
-                        placeholder="E-mail ou pseudo"
                         autoComplete="username"
-                        aria-label="Identifiant"
+                        autoCapitalize="none"
+                        spellCheck={false}
+                        aria-invalid={errors.identifiant ? true : undefined}
+                        aria-describedby={errors.identifiant ? "identifiant-error" : undefined}
                         {...register("identifiant", { required: true })}
                     />
-                    {errors.identifiant?.type === "required" && (
-                        <span className="mt-1 block text-center text-sm text-destructive">Identifiant obligatoire</span>
+                    {errors.identifiant && (
+                        <p id="identifiant-error" className="text-sm text-destructive" role="alert">
+                            Indiquez votre e-mail ou votre pseudo.
+                        </p>
                     )}
                 </div>
 
-                <div>
+                <div className="flex flex-col gap-1.5">
+                    <Label htmlFor="password">Mot de passe</Label>
                     <Input
+                        id="password"
                         type="password"
-                        placeholder="Mot de passe"
                         autoComplete="current-password"
-                        aria-label="Mot de passe"
+                        spellCheck={false}
+                        aria-invalid={errors.password ? true : undefined}
+                        aria-describedby={errors.password ? "password-error" : undefined}
                         {...register("password", { required: true })}
                     />
-                    {errors.password?.type === "required" && (
-                        <span className="mt-1 block text-center text-sm text-destructive">Mot de passe obligatoire</span>
+                    {errors.password && (
+                        <p id="password-error" className="text-sm text-destructive" role="alert">
+                            Indiquez votre mot de passe.
+                        </p>
                     )}
                 </div>
 
-                <Button type="submit" className="w-full">Se connecter</Button>
+                <Button type="submit" className="mt-1 w-full" disabled={isSubmitting}>
+                    {isSubmitting ? "Connexion…" : "Se connecter"}
+                </Button>
             </form>
-            <ToastContainer theme="dark" autoClose={2000} />
+            <ToastContainer theme="dark" autoClose={4000} />
         </>
     )
 }

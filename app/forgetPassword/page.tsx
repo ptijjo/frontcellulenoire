@@ -3,6 +3,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import React, { useState } from 'react'
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import apiClient from "@/lib/apiClient";
 import Url from "@/lib/Url";
 import Link from "next/link";
@@ -58,24 +59,27 @@ const ForgetPassword = () => {
             title="Mot de passe oublié"
             subtitle="Entrez votre adresse e-mail pour recevoir un lien de réinitialisation."
         >
-            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-                <div>
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5" noValidate>
+                <div className="flex flex-col gap-1.5">
+                    <Label htmlFor="email">E-mail</Label>
                     <Input
+                        id="email"
                         type="email"
-                        placeholder="Votre e-mail"
                         autoComplete="email"
+                        spellCheck={false}
+                        aria-invalid={errors.email ? true : undefined}
                         {...register("email", { required: true })}
                     />
                     {errors.email?.type === "required" && (
-                        <span className="mt-1 block text-center text-sm text-destructive">E-mail obligatoire</span>
+                        <p className="text-sm text-destructive" role="alert">Indiquez votre e-mail.</p>
                     )}
                 </div>
 
-                {erreur && <p className="text-center text-sm text-destructive">{erreur}</p>}
+                {erreur && <p className="text-sm text-destructive" role="alert">{erreur}</p>}
 
-                <Button type="submit" className="w-full">Réinitialiser le mot de passe</Button>
+                <Button type="submit" className="w-full">Recevoir le lien</Button>
             </form>
-            <Link href="/" className="mt-4 block text-center text-sm text-primary hover:underline">
+            <Link href="/" className="mt-5 block text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">
                 Retour à la connexion
             </Link>
         </AuthShell>

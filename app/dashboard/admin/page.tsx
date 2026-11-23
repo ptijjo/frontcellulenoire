@@ -187,8 +187,8 @@ const AdminDashboard = () => {
 function StatCard({ label, value }: { label: string; value: number }) {
     return (
         <div className="surface-card p-4">
-            <p className="text-xs uppercase tracking-wide text-muted-foreground">{label}</p>
-            <p className="mt-1 font-serif text-2xl sm:text-3xl">{value}</p>
+            <p className="text-sm text-muted-foreground">{label}</p>
+            <p className="mt-1 font-serif text-3xl tabular-nums">{value}</p>
         </div>
     );
 }

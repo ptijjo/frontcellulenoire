@@ -12,17 +12,17 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ pseudo, id, avatar, role }) => {
     return (
-        <header className="sticky top-0 z-40 flex w-full flex-row items-center justify-between border-b border-border bg-background/95 px-2 py-3 backdrop-blur-sm sm:px-4">
-            <Link href="/dashboard" className="flex items-center gap-2 sm:gap-3">
+        <header className="sticky top-0 z-40 flex w-full items-center justify-between border-b border-border bg-background/90 py-3 backdrop-blur-md">
+            <Link href="/dashboard" className="flex items-center gap-3">
                 <Image
                     src="/logos/logo.jpeg"
-                    alt="logo"
-                    width={48}
-                    height={48}
+                    alt=""
+                    width={36}
+                    height={36}
                     priority
-                    className="size-10 shrink-0 rounded-full border border-primary/30 object-cover sm:size-12"
+                    className="size-9 shrink-0 rounded-full object-cover"
                 />
-                <span className="hidden font-serif text-lg text-primary sm:block">Cellule noire</span>
+                <span className="font-serif text-lg leading-none">Cellule noire</span>
             </Link>
             <MenuHeader pseudo={pseudo} id={id} avatar={avatar} role={role} />
         </header>
